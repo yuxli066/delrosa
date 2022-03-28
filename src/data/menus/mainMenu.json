@@ -1,5 +1,10 @@
 [
     {
+        "name": "Home",
+        "url": "/",
+        "weight": 2
+    },
+    {
         "name": "Appointments",
         "url": "/appointments/",
         "weight": 3

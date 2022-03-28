@@ -1,9 +1,8 @@
 import React from 'react';
-import { graphql, Link } from 'gatsby';
+import { graphql } from 'gatsby';
 import Helmet from 'react-helmet';
 import SEO from '../components/SEO';
 import Layout from '../components/Layout';
-import Call from '../components/Call';
 
 const Home = props => {
   const intro = props.data.intro;
@@ -34,27 +33,6 @@ const Home = props => {
           </div>
         </div>
       </div>
-
-      {/*{services.length > 0 && (*/}
-      {/*  <div className="strip">*/}
-      {/*    <div className="container pt-6 pb-6 pb-md-10">*/}
-      {/*      <div className="row justify-content-start">*/}
-      {/*        {services.map(({ node }) => (*/}
-      {/*          <div key={node.id} className="col-12 col-md-4 mb-1">*/}
-      {/*            <div className="service service-summary">*/}
-      {/*              <div className="service-content">*/}
-      {/*                <h2 className="service-title">*/}
-      {/*                  <Link to={node.fields.slug}>{node.frontmatter.title}</Link>*/}
-      {/*                </h2>*/}
-      {/*                <p>{node.excerpt}</p>*/}
-      {/*              </div>*/}
-      {/*            </div>*/}
-      {/*          </div>*/}
-      {/*        ))}*/}
-      {/*      </div>*/}
-      {/*    </div>*/}
-      {/*  </div>*/}
-      {/*)}*/}
     </Layout>
   );
 };
