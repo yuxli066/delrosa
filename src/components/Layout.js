@@ -1,7 +1,6 @@
 import React from 'react';
 import SEO from './SEO';
 import Header from './Header';
-import Footer from './Footer';
 import '../scss/style.scss';
 
 const Layout = props => (
@@ -12,7 +11,6 @@ const Layout = props => (
         <Header />
         {props.children}
       </div>
-      <Footer />
     </div>
   </>
 );
