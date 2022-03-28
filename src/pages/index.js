@@ -9,7 +9,10 @@ const Home = props => {
   const intro = props.data.intro;
   const site = props.data.site.siteMetadata;
   const services = props.data.services.edges;
-  const features = props.data.features.edges;
+  const allFeatures = props.data.features.nodes;
+
+  console.log(allFeatures);
+  // eslint-disable-next-line max-len
   const introImageClasses = `intro-image ${intro.frontmatter.intro_image_absolute && 'intro-image-absolute'} ${intro.frontmatter.intro_image_hide_on_mobile && 'intro-image-hide-mobile'}`;
 
   return (
@@ -64,11 +67,11 @@ const Home = props => {
         </div>
       )}
 
-      {features.length > 0 && (
+      {allFeatures.length > 0 && (
         <div className="strip strip-grey">
           <div className="container pt-6 pb-6 pt-md-10 pb-md-10">
             <div className="row justify-content-center">
-              {features.map(({ node }) => (
+              {allFeatures.map( node => (
                 <div key={node.id} className="col-12 col-md-6 col-lg-4 mb-2">
                   <div className="feature">
                     {node.image && (
@@ -89,55 +92,52 @@ const Home = props => {
   );
 };
 
+// graphql query used here to pass data into page as prop
 export const query = graphql`
-  query {
-    services: allMarkdownRemark(
-      filter: { fileAbsolutePath: { regex: "/services\/.*/" } }
-      sort: { fields: [frontmatter___weight], order: ASC }
-      limit: 6
-    ) {
-      edges {
-        node {
-          id
-          frontmatter {
-            title
-            date(formatString: "DD MMMM YYYY")
-          }
-          fields {
-            slug
-          }
-          excerpt
+    query IndexQuery {
+        features: allFeaturesJson {
+            nodes {
+                id
+                title
+                description
+                image
+            }
         }
-      }
-    }
-    intro: markdownRemark(
-      fileAbsolutePath: {regex: "/content/index.md/"}
-    ) {
-        html
-        frontmatter {
-          image
-          intro_image
-          intro_image_absolute
-          intro_image_hide_on_mobile
-          title
+        site {
+            siteMetadata {
+                title
+            }
+        }
+        services: allMarkdownRemark(
+            filter: {fileAbsolutePath: {regex: "/services\/.*/"}}
+            limit: 20
+        ) {
+            edges {
+                node {
+                    frontmatter {
+                        title
+                        intro_image
+                        intro_image_absolute
+                        intro_image_hide_on_mobile
+                        date(formatString: "DD MMMM YYYY")
+                    }
+                    fields {
+                        slug
+                    }
+                    excerpt
+                }
+            }
+        }
+        intro: markdownRemark(fileAbsolutePath: {regex: "/index.md/gm"}) {
+            frontmatter {
+                title
+                intro_image
+                intro_image_absolute
+                intro_image_hide_on_mobile
+            }
+            html
         }
     }
-    features: allFeaturesJson {
-      edges {
-        node {
-          id
-          title
-          description
-          image
-        }
-      }
-    }
-    site {
-      siteMetadata {
-        title
-      }
-    }
-  }
 `;
 
 export default Home;

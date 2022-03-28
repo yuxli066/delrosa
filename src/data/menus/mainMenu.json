@@ -5,8 +5,8 @@
         "weight": 2
     },
     {
-        "name": "Team",
-        "url": "/team/",
+        "name": "Appointments",
+        "url": "/appointments/",
         "weight": 3
     },
     {

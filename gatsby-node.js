@@ -21,7 +21,7 @@ exports.createPages = ({ graphql, actions }) => {
     resolve(
       graphql(
         `
-          query {
+          {
             services: allMarkdownRemark(
               filter: { fileAbsolutePath: { regex: "content/services\/.*/" } }
               sort: { fields: [frontmatter___date], order: DESC }
@@ -32,26 +32,6 @@ exports.createPages = ({ graphql, actions }) => {
                   excerpt
                   frontmatter {
                     title
-                    date(formatString: "DD MMMM YYYY")
-                  }
-                  fields {
-                    slug
-                  }
-                }
-              }
-            }
-            team: allMarkdownRemark(
-              filter: { fileAbsolutePath: { regex: "content/team\/.*/" } }
-              sort: { fields: [frontmatter___date], order: DESC }
-            ) {
-              edges {
-                node {
-                  id
-                  excerpt
-                  frontmatter {
-                    title
-                    promoted
-                    image
                     date(formatString: "DD MMMM YYYY")
                   }
                   fields {
@@ -82,6 +62,10 @@ exports.createPages = ({ graphql, actions }) => {
           }
         `,
       ).then(result => {
+        if(result.errors) {
+          throw result.errors;
+        }
+
         result.data.services.edges.forEach(({ node }) => {
           const component = path.resolve('src/templates/service.js');
           createPage({
@@ -92,8 +76,9 @@ exports.createPages = ({ graphql, actions }) => {
             }
           });
         });
-        result.data.team.edges.forEach(({ node }) => {
-          const component = path.resolve('src/templates/team.js');
+
+        result.data.basic.edges.forEach(({ node }) => {
+          const component = path.resolve('src/templates/contact.js');
           createPage({
             path: node.frontmatter.path ? node.frontmatter.path : node.fields.slug,
             component,
@@ -102,6 +87,7 @@ exports.createPages = ({ graphql, actions }) => {
             }
           });
         });
+
         result.data.basic.edges.forEach(({ node }) => {
           let component = path.resolve('src/templates/basic.js');
           if (node.frontmatter.template) {

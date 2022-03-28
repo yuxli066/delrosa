@@ -2,8 +2,9 @@ const guid = process.env.NETLIFY_GOOGLE_ANALYTICS_ID;
 
 module.exports = {
   siteMetadata: {
-    title: 'Gatsby Serif Theme',
-    description: 'my theme'
+    title: 'Del Rosa Massage',
+    description: 'A great place to get your massage needs',
+    author: '@Leo Li'
   },
   plugins: [
     'gatsby-plugin-sass',
