@@ -2,6 +2,7 @@ import React from 'react';
 import { graphql } from 'gatsby';
 import SEO from '../components/SEO';
 import Layout from '../components/Layout';
+import AppointmentForm from '../components/AppointmentForm';
 
 const Appointments = props => {
   const { intro } = props.data;
@@ -15,17 +16,15 @@ const Appointments = props => {
       <div className="intro">
         <div className="container">
           <div className="row justify-content-start">
-            <div className="col-12 col-md-12 col-lg-6 order-2 order-md-1">
+            <div className="col-5 col-md-5 col-lg-5 order-1 order-md-1">
               <div dangerouslySetInnerHTML={{ __html: intro.html }} />
+            </div>
+            <div className="col-7 col-md-7 col-lg-7 order-2 order-md-1">
+              <AppointmentForm />
             </div>
           </div>
         </div>
       </div>
-
-      <div className="container">
-
-      </div>
-
     </Layout>
   );
 };
