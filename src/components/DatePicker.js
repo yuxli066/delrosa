@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { enGB } from 'date-fns/locale';
 import { DatePicker, useDateInput } from 'react-nice-dates';
 import 'react-nice-dates/build/style.css';
+import '../scss/components/_appointment-form.scss';
 
-function DatePickerWithTimeInputExample({onDateChange}) {
+function DatePickerWithTimeInput({onDateChange}) {
   const [date, setDate] = useState(new Date(2020, 1, 24, 18, 15));
   const timeInputProps = useDateInput({
     date,
@@ -26,12 +27,12 @@ function DatePickerWithTimeInputExample({onDateChange}) {
         format='dd/MM/yyyy'
       >
         {({ inputProps, focused }) => (
-          <input className={'input' + (focused ? ' -focused' : '')} style={{ width: 150 }} {...inputProps} />
+          <input className={'date-input' + (focused ? ' -focused' : '')} style={{ width: 150 }} {...inputProps} />
         )}
       </DatePicker>
-      <input className='input' style={{ marginLeft: 16, width: 80 }} {...timeInputProps} />
+      <input className='date-input' style={{ marginLeft: 16, width: 80 }} {...timeInputProps} />
     </div>
   );
 }
 
-export default DatePickerWithTimeInputExample;
+export default DatePickerWithTimeInput;

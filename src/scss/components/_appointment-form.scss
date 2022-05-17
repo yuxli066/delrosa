@@ -91,6 +91,14 @@
 
 /* Date Picker Calendar */
 
+.date-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 3em;
+}
+
 .nice-dates-navigation, .nice-dates-day {
   color: #111;
 }
@@ -103,7 +111,21 @@
   max-height: 480px;
   transition: none;
   top: 150px !important;
-  left: 250px !important;
+  left: 300px !important;
+}
+
+.date-input {
+  background-color: #fff;
+  border-radius: 6px;
+  border: 1px solid #d3dde6;
+  color: #0e3254;
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  height: 42px;
+  outline: none;
+  padding: 0 12px;
+  transition: border-color .2s;
 }
 
 /* mixins */

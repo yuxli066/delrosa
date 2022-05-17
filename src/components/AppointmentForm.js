@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import DatePickerWithTimeInputExample from './DatePicker';
+import DatePickerWithTimeInput from './DatePicker';
 import '../scss/components/_appointment-form.scss';
 
 const AppointmentForm = () => {
@@ -50,7 +50,9 @@ const AppointmentForm = () => {
               </div>
             ))
           }
-          <DatePickerWithTimeInputExample onDateChange={onDateChange} />
+          <div className="date-wrapper">
+            <DatePickerWithTimeInput onDateChange={onDateChange} />
+          </div>
           <div className="submit-button">
             <a href="#">
               Submit
