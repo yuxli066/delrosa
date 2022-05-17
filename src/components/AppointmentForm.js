@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DatePickerWithTimeInputExample from './DatePicker';
 import '../scss/components/_appointment-form.scss';
 
 const AppointmentForm = () => {
@@ -6,7 +7,8 @@ const AppointmentForm = () => {
     'First Name': '',
     'Last Name': '',
     'Email': '',
-    'Phone Number': ''
+    'Phone Number': '',
+    'Appointment Date': ''
   });
   const userFields = ['First Name', 'Last Name', 'Email', 'Phone Number'];
 
@@ -16,9 +18,17 @@ const AppointmentForm = () => {
       ...clientInfo,
       [eType]: e.target.value
     });
-    console.log(clientInfo);
   };
-  
+
+  const onDateChange = newDate => {
+    setClientInfo({
+      ...clientInfo,
+      'Appointment Date': newDate
+    });
+  };
+
+  console.log(clientInfo);
+
   return (
     <>
       <div className="login-box">
@@ -40,6 +50,7 @@ const AppointmentForm = () => {
               </div>
             ))
           }
+          <DatePickerWithTimeInputExample onDateChange={onDateChange} />
           <div className="submit-button">
             <a href="#">
               Submit

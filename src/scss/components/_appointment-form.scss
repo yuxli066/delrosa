@@ -89,6 +89,23 @@
   justify-content: space-around;
 }
 
+/* Date Picker Calendar */
+
+.nice-dates-navigation, .nice-dates-day {
+  color: #111;
+}
+
+.nice-dates-popover {
+  box-shadow: none;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  max-width: 480px;
+  max-height: 480px;
+  transition: none;
+  top: 150px !important;
+  left: 250px !important;
+}
+
 /* mixins */
 
 @mixin animationNumber($num) {
