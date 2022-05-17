@@ -9,7 +9,8 @@
     "build": "yarn workspace massage-website-frontend build"
   },
   "workspaces": [
-    "massage-website-frontend"
+    "massage-website-frontend",
+    "massage-website-backend"
   ],
   "engines": {
     "node": "16.13.1"
