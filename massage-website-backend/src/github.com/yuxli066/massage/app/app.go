@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"leo-blog-post/src/github.com/yuxli066/blogposts/app/handler"
+	"leo-blog-post/src/github.com/yuxli066/massage/app/handler"
 
 	"github.com/gorilla/mux"
 )
@@ -23,7 +23,7 @@ func (a *App) Initialize() {
 // The setRouters function specifies different backend routes for the api
 func (a *App) setRouters() {
 	a.Get("/api/ping", a.handleRequest(handler.GetHealthCheck))
-	a.Get("/api/posts", a.handleRequest(handler.GetPosts))
+	a.Post("/api/sendEmail", a.handleRequest(handler.SendEmail))
 }
 
 // HTTP CRUD wrapper function for HTTP GET
@@ -33,7 +33,7 @@ func (a *App) Get(path string, f func(w http.ResponseWriter, r *http.Request)) {
 
 // HTTP CRUD wrapper function for HTTP POST
 func (a *App) Post(path string, f func(w http.ResponseWriter, r *http.Request)) {
-	a.Router.HandleFunc(path, f).Methods("GET")
+	a.Router.HandleFunc(path, f).Methods("POST")
 }
 
 // The Run function runs the api on specified port number
@@ -49,10 +49,4 @@ func (a *App) handleRequest(handler RequestHandlerFunction) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		handler(w, r)
 	}
-}
-
-// The GetHTTPHandler function returns the http handler for App
-// USED FOR TESTING PURPOSES ONLY
-func (a *App) GetHTTPHandler() http.Handler {
-	return a.Router
 }
