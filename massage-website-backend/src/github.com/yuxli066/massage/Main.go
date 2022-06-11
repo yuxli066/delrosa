@@ -1,7 +1,7 @@
 package main
 
 import (
-	"leo-blog-post/src/github.com/yuxli066/massage/app"
+	"delrosa/src/github.com/yuxli066/massage/app"
 )
 
 func main() {
