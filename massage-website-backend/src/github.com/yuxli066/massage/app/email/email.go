@@ -9,13 +9,14 @@ import (
 	"net/smtp"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 type Email struct {
-	SERVER     smtp.Client
+	SERVER     *smtp.Client
 	CERTPATH   string
 	SERVERNAME string
-	SERVERPORT int32
+	SERVERPORT int
 	FROMEMAIL  string
 	TOEMAILS   []string
 	MESSAGE    string
@@ -23,8 +24,9 @@ type Email struct {
 
 type EmailSender interface {
 	GetHostname()
-	AddCerts()
+	GetServerUrl()
 	SendHELO()
+	AddCerts()
 	SendMail()
 	Execute()
 }
@@ -38,8 +40,13 @@ func (e Email) GetHostname() string {
 	return hostname
 }
 
+func (e Email) GetServerUrl() string {
+	log.Println("Server URL: " + e.SERVERNAME + ":" + strconv.Itoa(e.SERVERPORT))
+	return e.SERVERNAME + ":" + strconv.Itoa(e.SERVERPORT)
+}
+
 func (e Email) AddCerts() {
-	// add smtp certificate before making tls connection
+	log.Println("Adding certificates to our server...")
 	certs := x509.NewCertPool()
 	workingDir, _ := os.Getwd()
 	pemData, err := ioutil.ReadFile(filepath.Join(workingDir, e.CERTPATH))
@@ -47,7 +54,7 @@ func (e Email) AddCerts() {
 		log.Println(err)
 	}
 	certs.AppendCertsFromPEM(pemData)
-	config := &tls.Config{ServerName: e.SERVERNAME}
+	config := &tls.Config{ServerName: e.SERVERNAME, InsecureSkipVerify: true}
 	config.RootCAs = certs
 	if err = e.SERVER.StartTLS(config); err != nil {
 		log.Println("TLS ERROR:", err.Error())
@@ -55,6 +62,7 @@ func (e Email) AddCerts() {
 }
 
 func (e Email) SendHELO() {
+	log.Println("Sending HELO/EHLO to server")
 	domainName := e.GetHostname()
 	err := e.SERVER.Hello(domainName)
 	if err != nil {
@@ -63,16 +71,14 @@ func (e Email) SendHELO() {
 }
 
 func (e Email) SendMail() {
-	// Send Mail
+	log.Println("Sending email...")
 	err := e.SERVER.Mail(e.FROMEMAIL)
 	if err != nil {
 		log.Println("MAIL ERROR:", err.Error())
 	}
-	for _, email := range e.TOEMAILS {
-		err := e.SERVER.Rcpt(email)
-		if err != nil {
-			log.Println("RECEIPT ERROR:", err.Error())
-		}
+	err = e.SERVER.Rcpt("yuxli066@gmail.com")
+	if err != nil {
+		log.Println("RECEIPT ERROR:", err.Error())
 	}
 	emailData, err := e.SERVER.Data()
 	if err != nil {
@@ -86,4 +92,10 @@ func (e Email) SendMail() {
 	if err != nil {
 		log.Println("DATA CLOSE ERROR:", err.Error())
 	}
+}
+
+func (e Email) Execute() {
+	e.SendHELO()
+	e.AddCerts()
+	e.SendMail()
 }
