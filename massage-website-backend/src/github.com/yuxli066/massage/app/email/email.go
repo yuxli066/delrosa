@@ -12,23 +12,48 @@ import (
 	"strconv"
 )
 
+type EmailMessage struct {
+	SUBJECT string
+	MESSAGE struct {
+		NAME  string
+		DATE  string
+		TIME  string
+		TYPE  string
+		PRICE int
+	}
+}
+
 type Email struct {
 	SERVER     *smtp.Client
 	CERTPATH   string
 	SERVERNAME string
 	SERVERPORT int
 	FROMEMAIL  string
-	TOEMAILS   []string
-	MESSAGE    string
+	TOEMAIL    string
+	EMAILBODY  EmailMessage
 }
 
 type EmailSender interface {
+	ConstructEmailMsg()
 	GetHostname()
 	GetServerUrl()
 	SendHELO()
 	AddCerts()
 	SendMail()
 	Execute()
+}
+
+func (e Email) ConstructEmailMsg() []byte {
+	return []byte("To: " + e.TOEMAIL + "\r\n" +
+		"Subject: " + e.EMAILBODY.SUBJECT + "\r\n" +
+		"\r\n\r\n" +
+		"Client Name: " + e.EMAILBODY.MESSAGE.NAME + "\r\n" +
+		"Appointment Date: " + e.EMAILBODY.MESSAGE.DATE + "\r\n" +
+		"Appointment Time: " + e.EMAILBODY.MESSAGE.TIME + "\r\n" +
+		"Massage Type: " + e.EMAILBODY.MESSAGE.TYPE + "\r\n" +
+		"Price: $" + strconv.Itoa(e.EMAILBODY.MESSAGE.PRICE) + "\r\n\r\n" +
+		"Please add this to the calendar." +
+		"\r\n")
 }
 
 func (e Email) GetHostname() string {
@@ -76,7 +101,7 @@ func (e Email) SendMail() {
 	if err != nil {
 		log.Println("MAIL ERROR:", err.Error())
 	}
-	err = e.SERVER.Rcpt("yuxli066@gmail.com")
+	err = e.SERVER.Rcpt(e.TOEMAIL)
 	if err != nil {
 		log.Println("RECEIPT ERROR:", err.Error())
 	}
@@ -84,7 +109,7 @@ func (e Email) SendMail() {
 	if err != nil {
 		log.Println("DATA ERROR:", err.Error())
 	}
-	_, err = emailData.Write([]byte(e.MESSAGE))
+	_, err = emailData.Write([]byte(e.ConstructEmailMsg()))
 	if err != nil {
 		log.Println("DATA WRITE ERROR:", err.Error())
 	}

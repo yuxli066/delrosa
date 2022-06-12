@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -15,7 +16,7 @@ var emailClient email.Email = email.Email{
 	SERVERNAME: "smtp-relay.gmail.com",
 	SERVERPORT: 587,
 	FROMEMAIL:  "paulli@delrosamassage.com",
-	TOEMAILS:   []string{"yuxli066@gmail.com"},
+	TOEMAIL:    "yuxli066@gmail.com",
 }
 
 // API health check
@@ -35,10 +36,12 @@ func SendEmail(w http.ResponseWriter, r *http.Request) {
 
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		panic(err)
+		log.Printf("Error reading body: %v", err)
+		respondError(w, http.StatusBadRequest, "Cannot read request body")
+		return
 	}
 
-	log.Println(b)
+	json.Unmarshal([]byte(b), &emailClient.EMAILBODY)
 
 	emailClient.Execute()
 	fmt.Println("Email Sent!")
