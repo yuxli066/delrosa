@@ -54,7 +54,7 @@ func (e Email) AddCerts() {
 		log.Println(err)
 	}
 	certs.AppendCertsFromPEM(pemData)
-	config := &tls.Config{ServerName: e.SERVERNAME, InsecureSkipVerify: true}
+	config := &tls.Config{ServerName: e.SERVERNAME, InsecureSkipVerify: true} // fixme later, should not be insecure
 	config.RootCAs = certs
 	if err = e.SERVER.StartTLS(config); err != nil {
 		log.Println("TLS ERROR:", err.Error())

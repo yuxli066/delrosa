@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/smtp"
@@ -15,7 +16,6 @@ var emailClient email.Email = email.Email{
 	SERVERPORT: 587,
 	FROMEMAIL:  "paulli@delrosamassage.com",
 	TOEMAILS:   []string{"yuxli066@gmail.com"},
-	MESSAGE:    "leoleoleoleoleo",
 }
 
 // API health check
@@ -32,6 +32,14 @@ func SendEmail(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 	}
 	defer emailClient.SERVER.Close()
+
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println(b)
+
 	emailClient.Execute()
 	fmt.Println("Email Sent!")
 	respondJSON(w, http.StatusOK, map[string]bool{"Email Sent": true})
