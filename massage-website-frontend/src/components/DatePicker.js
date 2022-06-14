@@ -16,7 +16,10 @@ function DatePickerWithTimeInput({onDateChange}) {
     }
   });
   return (
-    <div style={{ display: 'flex' }}>
+    <div style={{ 
+      
+      display: 'flex' 
+    }}>
       <DatePicker 
         date={date} 
         onDateChange={newDate => {
@@ -27,10 +30,21 @@ function DatePickerWithTimeInput({onDateChange}) {
         format='dd/MM/yyyy'
       >
         {({ inputProps, focused }) => (
-          <input className={'date-input' + (focused ? ' -focused' : '')} style={{ width: 150 }} {...inputProps} />
+          <input className={'date-input' + (focused ? ' -focused' : '')} 
+          style={{ 
+            width: 180, 
+            height: 60,
+            marginTop: "-2em" 
+          }} {...inputProps} />
         )}
       </DatePicker>
-      <input className='date-input' style={{ marginLeft: 16, width: 80 }} {...timeInputProps} />
+      <input className='date-input' 
+        style={{ 
+          marginLeft: 16, 
+          width: 120, 
+          height: 60,
+          marginTop: "-2em"  
+        }} {...timeInputProps} />
     </div>
   );
 }
