@@ -11,7 +11,7 @@ const Service = ({ data }) => {
         <div className="row justify-content-start">
           <div className="col-12 col-md-8">
             <div className="service service-single">
-              <h1 className="title">{title}</h1>
+              <p className="title">{title}</p>
               <div className="content" dangerouslySetInnerHTML={{ __html: html }} />
             </div>
           </div>

@@ -25,10 +25,16 @@ const Home = props => {
         <div className="container">
           <div className="row justify-content-start">
             <div className="col-5">
-              <div dangerouslySetInnerHTML={{ __html: intro.html }} />
+              <div 
+                dangerouslySetInnerHTML={{ __html: intro.html }} 
+                />
             </div>
             <div className="col-5">
-              <img alt={intro.frontmatter.title} className={introImageClasses} src={intro.frontmatter.intro_image} />
+              <img 
+                alt={intro.frontmatter.title} 
+                className={introImageClasses} 
+                src={intro.frontmatter.intro_image} 
+                />
             </div>
           </div>
         </div>

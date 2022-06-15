@@ -59,13 +59,32 @@ exports.createPages = ({ graphql, actions }) => {
                 }
               }
             }
+            root: allMarkdownRemark(
+              filter: { fileAbsolutePath: { regex: "content/root\/.*/" } }
+            ) {
+              edges {
+                node {
+                  id
+                  excerpt
+                  html
+                  frontmatter {
+                    title
+                    path
+                    template
+                  }
+                  fields {
+                    slug
+                  }
+                }
+              }
+            }
           }
         `,
       ).then(result => {
         if(result.errors) {
           throw result.errors;
         }
-
+        
         result.data.services.edges.forEach(({ node }) => {
           const component = path.resolve('src/templates/service.js');
           createPage({
@@ -88,7 +107,7 @@ exports.createPages = ({ graphql, actions }) => {
           });
         });
 
-        result.data.basic.edges.forEach(({ node }) => {
+        result.data.root.edges.forEach(({ node }) => {
           let component = path.resolve('src/templates/basic.js');
           if (node.frontmatter.template) {
             component = path.resolve(`src/templates/${node.frontmatter.template}.js`);

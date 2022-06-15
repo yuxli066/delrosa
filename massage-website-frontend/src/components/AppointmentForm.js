@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import DatePickerWithTimeInput from './DatePicker';
 import '../scss/components/_appointment-form.scss';
-import FormHelperText from '@mui/material/FormHelperText';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
