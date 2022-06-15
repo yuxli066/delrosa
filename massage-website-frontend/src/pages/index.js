@@ -25,9 +25,7 @@ const Home = props => {
         <div className="container">
           <div className="row justify-content-start">
             <div className="col-5">
-              <div 
-                dangerouslySetInnerHTML={{ __html: intro.html }} 
-                />
+              <div dangerouslySetInnerHTML={{ __html: intro.html }} />
             </div>
             <div className="col-5">
               <img 
@@ -59,27 +57,7 @@ export const query = graphql`
                 title
             }
         }
-        services: allMarkdownRemark(
-            filter: {fileAbsolutePath: {regex: "/services\/.*/"}}
-            limit: 20
-        ) {
-            edges {
-                node {
-                    frontmatter {
-                        title
-                        intro_image
-                        intro_image_absolute
-                        intro_image_hide_on_mobile
-                        date(formatString: "DD MMMM YYYY")
-                    }
-                    fields {
-                        slug
-                    }
-                    excerpt
-                }
-            }
-        }
-        intro: markdownRemark(fileAbsolutePath: {regex: "/index.md/gm"}) {
+        intro: markdownRemark(fileAbsolutePath: {regex: "/(home.md)/"}) {
             frontmatter {
                 title
                 intro_image
