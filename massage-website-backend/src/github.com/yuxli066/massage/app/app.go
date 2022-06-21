@@ -11,7 +11,8 @@ import (
 
 // App struct holds key app components, such as the api router
 type App struct {
-	Router *mux.Router
+	Router       *mux.Router
+	StaticRouter *mux.Router
 }
 
 // Initialize server application
@@ -20,15 +21,29 @@ func (a *App) Initialize() {
 	a.setRouters()
 }
 
+func (a *App) InitializeStatic() {
+	a.StaticRouter = mux.NewRouter()
+	a.setStaticRouters()
+}
+
 // The setRouters function specifies different backend routes for the api
 func (a *App) setRouters() {
 	a.Get("/api/ping", a.handleRequest(handler.GetHealthCheck))
 	a.Post("/api/sendEmail", a.handleRequest(handler.SendEmail))
 }
 
+func (a *App) setStaticRouters() {
+	a.StaticGet("/", a.handleRequest(handler.ServeStaticFiles))
+}
+
 // HTTP CRUD wrapper function for HTTP GET
 func (a *App) Get(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.Router.HandleFunc(path, f).Methods("GET")
+}
+
+// HTTP CRUD wrapper function for HTTP GET
+func (a *App) StaticGet(path string, f func(w http.ResponseWriter, r *http.Request)) {
+	a.StaticRouter.HandleFunc(path, f).Methods("GET")
 }
 
 // HTTP CRUD wrapper function for HTTP POST
@@ -39,6 +54,10 @@ func (a *App) Post(path string, f func(w http.ResponseWriter, r *http.Request)) 
 // The Run function runs the api on specified port number
 func (a *App) Run(host string) {
 	log.Fatal(http.ListenAndServe(host, a.Router))
+}
+
+func (a *App) RunStatic(host string) {
+	log.Fatal(http.ListenAndServe(host, a.StaticRouter))
 }
 
 // The RequestHandlerFunction handles incoming http requests
