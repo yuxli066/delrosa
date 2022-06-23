@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  
+  massagewebsite: 
+    image: yuxuanleoli/massagewebsite
+    restart: always
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+      - "80:80"
+  
+  portainer:
+    image: portainer/portainer-ce
+    restart: always
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+volumes:
+  portainer_data:

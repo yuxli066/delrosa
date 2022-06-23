@@ -12,52 +12,59 @@ import (
 // App struct holds key app components, such as the api router
 type App struct {
 	Router       *mux.Router
+	ApiRouter    *mux.Router
 	StaticRouter *mux.Router
 }
 
-// Initialize server application
+// Initialize server application & serve static files
 func (a *App) Initialize() {
 	a.Router = mux.NewRouter()
-	a.setRouters()
-}
+	a.ApiRouter = a.Router.PathPrefix("/api/").Subrouter()
 
-func (a *App) InitializeStatic() {
-	a.StaticRouter = mux.NewRouter()
-	a.setStaticRouters()
+	// set api routers
+	a.setRouters()
+
+	// set static routers
+	a.Router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./massage-website-frontend/public/static/"))))
+	a.Router.PathPrefix("/images/").Handler(http.StripPrefix("/images/", http.FileServer(http.Dir("./massage-website-frontend/public/images/"))))
+	a.Router.PathPrefix("/page-data/").Handler(http.StripPrefix("/page-data/", http.FileServer(http.Dir("./massage-website-frontend/public/page-data/"))))
+
+	a.Router.PathPrefix("/about/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./massage-website-frontend/public/about/index.html")
+	})
+
+	a.Router.PathPrefix("/appointments/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./massage-website-frontend/public/appointments/index.html")
+	})
+
+	a.Router.PathPrefix("/contact/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./massage-website-frontend/public/contact/index.html")
+	})
+
+	a.Router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./massage-website-frontend/public/index.html")
+	})
 }
 
 // The setRouters function specifies different backend routes for the api
 func (a *App) setRouters() {
-	a.Get("/api/ping", a.handleRequest(handler.GetHealthCheck))
-	a.Post("/api/sendEmail", a.handleRequest(handler.SendEmail))
-}
-
-func (a *App) setStaticRouters() {
-	a.StaticGet("/", a.handleRequest(handler.ServeStaticFiles))
+	a.Get("/ping", a.handleRequest(handler.GetHealthCheck))
+	a.Post("/sendEmail", a.handleRequest(handler.SendEmail))
 }
 
 // HTTP CRUD wrapper function for HTTP GET
 func (a *App) Get(path string, f func(w http.ResponseWriter, r *http.Request)) {
-	a.Router.HandleFunc(path, f).Methods("GET")
-}
-
-// HTTP CRUD wrapper function for HTTP GET
-func (a *App) StaticGet(path string, f func(w http.ResponseWriter, r *http.Request)) {
-	a.StaticRouter.HandleFunc(path, f).Methods("GET")
+	a.ApiRouter.HandleFunc(path, f).Methods("GET")
 }
 
 // HTTP CRUD wrapper function for HTTP POST
 func (a *App) Post(path string, f func(w http.ResponseWriter, r *http.Request)) {
-	a.Router.HandleFunc(path, f).Methods("POST")
+	a.ApiRouter.HandleFunc(path, f).Methods("POST")
 }
 
 // The Run function runs the api on specified port number
 func (a *App) Run(host string) {
 	log.Fatal(http.ListenAndServe(host, a.Router))
-}
-
-func (a *App) RunStatic(host string) {
-	log.Fatal(http.ListenAndServe(host, a.StaticRouter))
 }
 
 // The RequestHandlerFunction handles incoming http requests

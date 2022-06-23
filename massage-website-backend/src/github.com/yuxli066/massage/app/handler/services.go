@@ -19,11 +19,6 @@ var emailClient email.Email = email.Email{
 	TOEMAIL:    "yuxli066@gmail.com",
 }
 
-func ServeStaticFiles(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Serving static files!")
-	respondJSON(w, http.StatusOK, map[string]string{"Port": "80"})
-}
-
 // API health check
 func GetHealthCheck(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Service is healthy!")

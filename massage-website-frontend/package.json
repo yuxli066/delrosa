@@ -9,7 +9,7 @@
     "build": "gatsby build"
   },
   "engines": {
-    "node": "16.13.1"
+    "node": "16.15.0"
   },
   "engineStrict": true,
   "dependencies": {
