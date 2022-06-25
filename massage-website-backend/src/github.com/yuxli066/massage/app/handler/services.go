@@ -8,23 +8,12 @@ import (
 	"log"
 	"net/http"
 	"net/smtp"
-	"strings"
-	"time"
 
+	calendarClient "delrosa/src/github.com/yuxli066/massage/app/calendar"
 	"delrosa/src/github.com/yuxli066/massage/app/email"
 
-	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
-	"google.golang.org/api/option"
 )
-
-var emailClient email.Email = email.Email{
-	CERTPATH:   "src/github.com/yuxli066/massage/certs/tlsCert.crt",
-	SERVERNAME: "smtp-relay.gmail.com",
-	SERVERPORT: 587,
-	FROMEMAIL:  "paulli@delrosamassage.com",
-	TOEMAIL:    "yuxli066@gmail.com",
-}
 
 // API health check
 func GetHealthCheck(w http.ResponseWriter, r *http.Request) {
@@ -34,6 +23,15 @@ func GetHealthCheck(w http.ResponseWriter, r *http.Request) {
 
 // Send appointment email out
 func SendEmail(w http.ResponseWriter, r *http.Request) {
+
+	var emailClient email.Email = email.Email{
+		CERTPATH:   "src/github.com/yuxli066/massage/certs/tlsCert.crt",
+		SERVERNAME: "smtp-relay.gmail.com",
+		SERVERPORT: 587,
+		FROMEMAIL:  "paulli@delrosamassage.com",
+		TOEMAIL:    "yuxli066@gmail.com",
+	}
+
 	var err error
 	emailClient.SERVER, err = smtp.Dial(emailClient.GetServerUrl())
 	if err != nil {
@@ -55,41 +53,16 @@ func SendEmail(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, map[string]bool{"Email Sent": true})
 }
 
-// check for appointment availability
+// check for appointment availability using Google's Calendar API
 func CheckAvailability(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	b, err := ioutil.ReadFile("src/github.com/yuxli066/massage/certs/massage-calendar.json")
-	if err != nil {
-		log.Fatalf("Unable to read client secret file: %v", err)
+	var c calendarClient.GoogleCalendar = calendarClient.GoogleCalendar{
+		CTX:            ctx,
+		USEREMAIL:      "paulli@delrosamassage.com",
+		CONFIGFILEPATH: "src/github.com/yuxli066/massage/certs/massage-calendar.json",
+		SCOPE:          calendar.CalendarScope,
 	}
-
-	config, err := google.JWTConfigFromJSON(b, calendar.CalendarScope)
-	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
-	}
-	config.Subject = "paulli@delrosamassage.com"
-
-	client := config.Client(ctx)
-
-	calendarService, err := calendar.NewService(ctx, option.WithHTTPClient(client))
-	if err != nil {
-		log.Fatalf("Unable to retrieve Calendar client: %v", err)
-	}
-
-	t := time.Now().Format(time.RFC3339)
-	events, err := calendarService.Events.List("primary").ShowDeleted(false).SingleEvents(true).TimeMin(t).MaxResults(10).OrderBy("startTime").Do()
-	if err != nil {
-		log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
-	}
-
-	fmt.Print("\n Upcoming events: \n\n")
-	if len(events.Items) == 0 {
-		fmt.Println("No upcoming events found.")
-	} else {
-		for _, item := range events.Items {
-			date := strings.Split(item.Start.DateTime, "T")[0]
-			time := strings.Split(item.Start.DateTime, "T")[1]
-			fmt.Printf(" Event Name: %v \n Date: %v \n Event Time: %v\n\n", strings.Trim(item.Summary, " "), date, time)
-		}
-	}
+	c.Authenticate()
+	c.GetAppointments()
+	respondJSON(w, http.StatusOK, map[string]bool{"Calendar API": true})
 }
