@@ -50,6 +50,7 @@ func (a *App) Initialize() {
 func (a *App) setRouters() {
 	a.Get("/ping", a.handleRequest(handler.GetHealthCheck))
 	a.Post("/sendEmail", a.handleRequest(handler.SendEmail))
+	a.Get("/checkAvailability", a.handleRequest(handler.CheckAvailability))
 }
 
 // HTTP CRUD wrapper function for HTTP GET
