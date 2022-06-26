@@ -2,6 +2,7 @@ package calendar
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -20,9 +21,11 @@ type GoogleCalendar struct {
 	USEREMAIL      string
 	CONFIGFILEPATH string
 	SCOPE          string
+	CALENDARID     string
 	CONFIG         *jwt.Config
 	CLIENT         *http.Client
 	SERVICE        *calendar.Service
+	CALENDARIDS    *calendar.CalendarList
 }
 
 type GoogleCalendarService interface {
@@ -31,6 +34,7 @@ type GoogleCalendarService interface {
 	GetService()
 	Authenticate()
 	GetAppointments()
+	CheckAvailability()
 }
 
 func (g *GoogleCalendar) GetConfig() *jwt.Config {
@@ -70,6 +74,16 @@ func (g *GoogleCalendar) Authenticate() {
 	g.GetConfig()
 	g.GetClient()
 	g.GetService()
+	calendars, err := g.SERVICE.CalendarList.List().Do()
+	if err != nil {
+		log.Fatalf("Unable to retrieve Calendar list: %v", err)
+	}
+	log.Println("All User's Calendars ")
+	for _, item := range calendars.Items {
+		if item.AccessRole == "owner" {
+			g.CALENDARID = item.Id
+		}
+	}
 }
 
 func (g *GoogleCalendar) GetAppointments() {
@@ -89,4 +103,26 @@ func (g *GoogleCalendar) GetAppointments() {
 			fmt.Printf(" Name: %v \n Date: %v \n Event Time: %v\n\n", strings.Trim(item.Summary, " "), date, time)
 		}
 	}
+}
+
+func (g *GoogleCalendar) CheckAvailability() {
+	Tstart := time.Now()
+	Tend := Tstart.Add(time.Hour * 24 * 60)
+	freeBusyRequestQuery := calendar.FreeBusyRequest{
+		TimeMin:  Tstart.Format(time.RFC3339),
+		TimeMax:  Tend.Format(time.RFC3339),
+		TimeZone: "PST",
+		Items: []*calendar.FreeBusyRequestItem{
+			{
+				Id: g.CALENDARID,
+			},
+		},
+	}
+	freeTimes, err := g.SERVICE.Freebusy.Query(&freeBusyRequestQuery).Do()
+	if err != nil {
+		log.Fatalf("Unable to retrieve Calendar's availability: %v", err)
+	}
+	j, _ := json.MarshalIndent(freeTimes, "", "  ")
+	log.Println("Free time slots on the calendar: ")
+	log.Println(string(j))
 }
