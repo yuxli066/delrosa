@@ -63,7 +63,6 @@ func CheckAvailability(w http.ResponseWriter, r *http.Request) {
 		SCOPE:          calendar.CalendarScope,
 	}
 	c.Authenticate()
-	c.GetAppointments()
-	c.CheckAvailability()
-	respondJSON(w, http.StatusOK, map[string]bool{"Calendar API": true})
+	timesBusy := c.CheckAvailability()
+	respondJSON(w, http.StatusOK, timesBusy)
 }

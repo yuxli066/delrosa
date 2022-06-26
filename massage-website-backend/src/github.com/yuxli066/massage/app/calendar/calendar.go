@@ -2,7 +2,6 @@ package calendar
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -26,6 +25,11 @@ type GoogleCalendar struct {
 	CLIENT         *http.Client
 	SERVICE        *calendar.Service
 	CALENDARIDS    *calendar.CalendarList
+}
+
+type BusyTimes struct {
+	StartTime string
+	EndTime   string
 }
 
 type GoogleCalendarService interface {
@@ -78,7 +82,6 @@ func (g *GoogleCalendar) Authenticate() {
 	if err != nil {
 		log.Fatalf("Unable to retrieve Calendar list: %v", err)
 	}
-	log.Println("All User's Calendars ")
 	for _, item := range calendars.Items {
 		if item.AccessRole == "owner" {
 			g.CALENDARID = item.Id
@@ -105,7 +108,7 @@ func (g *GoogleCalendar) GetAppointments() {
 	}
 }
 
-func (g *GoogleCalendar) CheckAvailability() {
+func (g *GoogleCalendar) CheckAvailability() []BusyTimes {
 	Tstart := time.Now()
 	Tend := Tstart.Add(time.Hour * 24 * 60)
 	freeBusyRequestQuery := calendar.FreeBusyRequest{
@@ -118,11 +121,22 @@ func (g *GoogleCalendar) CheckAvailability() {
 			},
 		},
 	}
-	freeTimes, err := g.SERVICE.Freebusy.Query(&freeBusyRequestQuery).Do()
+	freeBusyRes, err := g.SERVICE.Freebusy.Query(&freeBusyRequestQuery).Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve Calendar's availability: %v", err)
 	}
-	j, _ := json.MarshalIndent(freeTimes, "", "  ")
-	log.Println("Free time slots on the calendar: ")
-	log.Println(string(j))
+
+	var bTimeList []BusyTimes
+	for _, times := range freeBusyRes.Calendars[g.USEREMAIL].Busy {
+		busyTimes := BusyTimes{
+			StartTime: times.Start,
+			EndTime:   times.End,
+		}
+		bTimeList = append(bTimeList, busyTimes)
+	}
+	log.Println("-------------------------------------------------------------------------------------------------------------")
+	log.Print("Times Not Available: ")
+	log.Print(bTimeList)
+	log.Println("-------------------------------------------------------------------------------------------------------------")
+	return bTimeList
 }
