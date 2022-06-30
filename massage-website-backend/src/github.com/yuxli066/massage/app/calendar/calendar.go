@@ -126,14 +126,24 @@ func (g *GoogleCalendar) SetAppointment(timeIn string, timeOut string) {
 				Email: g.USEREMAIL,
 			},
 		},
+		ColorId: "8",
 	}
-	event, err := g.SERVICE.Events.Insert(g.CALENDARID, &newAppointment).SendNotifications(true).Do()
+
+	// prints available event colors
+	// colors, err := g.SERVICE.Colors.Get().Do()
+	// if err != nil {
+	// 	log.Fatalf("Unable to retrieve calendar colors. %v\n", err)
+	// 	return
+	// }
+	// utils.PrettyPrint(colors.Event)
+
+	_, err := g.SERVICE.Events.Insert(g.CALENDARID, &newAppointment).SendUpdates("all").Do()
 	if err != nil {
 		log.Fatalf("Unable to create event. %v\n", err)
 		return
 	}
 	log.Println("-------------------------------------------------------------------------------------------------------------")
-	log.Println("Setting Appointment for time in: " + timeIn + " time out " + timeOut + " link: " + event.HtmlLink)
+	log.Println("Setting Appointment for time in: " + timeIn + " time out: " + timeOut)
 	log.Println("-------------------------------------------------------------------------------------------------------------")
 }
 
