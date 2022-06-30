@@ -66,3 +66,32 @@ func CheckAvailability(w http.ResponseWriter, r *http.Request) {
 	timesBusy := c.CheckAvailability()
 	respondJSON(w, http.StatusOK, timesBusy)
 }
+
+func SetNewAppointment(w http.ResponseWriter, r *http.Request) {
+	type appointmentTimes struct {
+		INTIME  string
+		OUTTIME string
+	}
+
+	t, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Printf("Error reading body: %v", err)
+		respondError(w, http.StatusBadRequest, "Cannot read request body")
+		return
+	}
+
+	var at appointmentTimes
+	json.Unmarshal([]byte(t), &at)
+
+	ctx := context.Background()
+	var c calendarClient.GoogleCalendar = calendarClient.GoogleCalendar{
+		CTX:            ctx,
+		USEREMAIL:      "paulli@delrosamassage.com",
+		CONFIGFILEPATH: "src/github.com/yuxli066/massage/certs/massage-calendar.json",
+		SCOPE:          calendar.CalendarScope,
+	}
+
+	c.Authenticate()
+	c.SetAppointment(at.INTIME, at.OUTTIME)
+	respondJSON(w, http.StatusOK, map[string]bool{"Appointment Set": true})
+}

@@ -24,7 +24,6 @@ type GoogleCalendar struct {
 	CONFIG         *jwt.Config
 	CLIENT         *http.Client
 	SERVICE        *calendar.Service
-	CALENDARIDS    *calendar.CalendarList
 }
 
 type BusyTimes struct {
@@ -106,6 +105,36 @@ func (g *GoogleCalendar) GetAppointments() {
 			fmt.Printf(" Name: %v \n Date: %v \n Event Time: %v\n\n", strings.Trim(item.Summary, " "), date, time)
 		}
 	}
+}
+
+func (g *GoogleCalendar) SetAppointment(timeIn string, timeOut string) {
+	var newAppointment calendar.Event = calendar.Event{
+		Summary:     "Event from API",
+		Location:    "Massage 1",
+		Description: "Short Description of the massage type",
+		Start: &calendar.EventDateTime{
+			DateTime: timeIn,
+			TimeZone: "America/Los_Angeles",
+		},
+		End: &calendar.EventDateTime{
+			DateTime: timeOut,
+			TimeZone: "America/Los_Angeles",
+		},
+		Kind: "calendar#event",
+		Attendees: []*calendar.EventAttendee{
+			{
+				Email: g.USEREMAIL,
+			},
+		},
+	}
+	event, err := g.SERVICE.Events.Insert(g.CALENDARID, &newAppointment).SendNotifications(true).Do()
+	if err != nil {
+		log.Fatalf("Unable to create event. %v\n", err)
+		return
+	}
+	log.Println("-------------------------------------------------------------------------------------------------------------")
+	log.Println("Setting Appointment for time in: " + timeIn + " time out " + timeOut + " link: " + event.HtmlLink)
+	log.Println("-------------------------------------------------------------------------------------------------------------")
 }
 
 func (g *GoogleCalendar) CheckAvailability() []BusyTimes {

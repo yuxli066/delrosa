@@ -49,8 +49,9 @@ func (a *App) Initialize() {
 // The setRouters function specifies different backend routes for the api
 func (a *App) setRouters() {
 	a.Get("/ping", a.handleRequest(handler.GetHealthCheck))
-	a.Post("/sendEmail", a.handleRequest(handler.SendEmail))
 	a.Get("/checkAvailability", a.handleRequest(handler.CheckAvailability))
+	a.Post("/sendEmail", a.handleRequest(handler.SendEmail))
+	a.Post("/createAppointment", a.handleRequest(handler.SetNewAppointment))
 }
 
 // HTTP CRUD wrapper function for HTTP GET
