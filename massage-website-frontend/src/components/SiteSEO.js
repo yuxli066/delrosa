@@ -3,7 +3,7 @@ import Helmet from 'react-helmet';
 import { StaticQuery, graphql } from 'gatsby';
 import favicon from '../../static/favicon-32x32.svg';
 
-const SEO = props => (
+const SiteSEO = props => (
   <StaticQuery
     query={detailsQuery}
     render={data => {
@@ -24,13 +24,13 @@ const SEO = props => (
   />
 );
 
-SEO.defaultProps = {
+SiteSEO.defaultProps = {
   lang: 'en',
   meta: [],
   keywords: []
 };
 
-export default SEO;
+export default SiteSEO;
 
 const detailsQuery = graphql`
   query DefaultSEOQuery {

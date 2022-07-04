@@ -1,11 +1,11 @@
 import React from 'react';
-import SEO from './SEO';
+import SiteSEO from './SiteSEO';
 import Header from './Header';
 import '../scss/style.scss';
 
 const Layout = props => (
   <>
-    <SEO />
+    <SiteSEO />
     <div className={`page${props.bodyClass ? ` ${props.bodyClass}` : ''}`}>
       <div id="wrapper" className="wrapper">
         <Header />

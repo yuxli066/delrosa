@@ -1,7 +1,7 @@
 import React from 'react';
 import { graphql } from 'gatsby';
 import Helmet from 'react-helmet';
-import SEO from '../components/SEO';
+import SiteSEO from '../components/SiteSEO';
 import Layout from '../components/Layout';
 
 const Home = props => {
@@ -13,7 +13,7 @@ const Home = props => {
 
   return (
     <Layout bodyClass="page-home">
-      <SEO title={site.title} />
+      <SiteSEO title={site.title} />
       <Helmet>
         <meta
           name="description"
@@ -24,10 +24,10 @@ const Home = props => {
       <div className="intro">
         <div className="container">
           <div className="row justify-content-start">
-            <div className="col-5">
+            <div className="col-sm-12 col-lg-5">
               <div dangerouslySetInnerHTML={{ __html: intro.html }} />
             </div>
-            <div className="col-5">
+            <div className="col-sm-12 col-lg-5">
               <img 
                 alt={intro.frontmatter.title} 
                 className={introImageClasses} 

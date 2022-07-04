@@ -7,6 +7,7 @@ module.exports = {
     author: '@Leo Li'
   },
   plugins: [
+    'gatsby-plugin-transition-link',
     'gatsby-plugin-sass',
     'gatsby-transformer-json',
     'gatsby-transformer-remark',

@@ -6,5 +6,3 @@ intro_image_hide_on_mobile: false
 ---
 
 # Make an Appointment for your next visit!
-
-You are welcome to make an appointment below: 

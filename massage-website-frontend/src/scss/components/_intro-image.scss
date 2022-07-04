@@ -9,19 +9,22 @@
   }
   @include media-breakpoint-up(md) {
     position: absolute;
-    bottom: -50px;
+    bottom: -80px;
     left: -50px;
-    width: 700px;
+    width: 900px;
+    height: 500px;
   }
   @include media-breakpoint-up(lg) {
-    bottom: -60px;
+    bottom: -90px;
     left: -60px;
-    width: 800px;
+    width: 900px;
+    height: 550px;
   }
   @include media-breakpoint-up(xl) {
-    bottom: -100px;
+    bottom: -130px;
     left: -70px;
-    width: 850px;
+    width: 900px;
+    height: 600px;
   }
 }
 .intro-image-hide-mobile {
