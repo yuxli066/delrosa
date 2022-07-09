@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { graphql } from 'gatsby';
 import SiteSEO from '../components/SiteSEO';
 import Layout from '../components/Layout';
 import AppointmentForm from '../components/AppointmentForm';
+import { sendEmail, createAppointment, checkAvailability } from "../services/appointmentService";
 
 const Appointments = props => {
   const { intro } = props.data;
-  // eslint-disable-next-line max-len
-  // const introImageClasses = `intro-image ${intro.frontmatter.intro_image_absolute && 'intro-image-absolute'} ${intro.frontmatter.intro_image_hide_on_mobile && 'intro-image-hide-mobile'}`;
+  
+  const [ timesNotAvailable, setTimesNotAvailable ] = useState([]);
+  useEffect(async () => {
+    checkAvailability()
+      .then((timesAvailable) => setTimesNotAvailable(timesAvailable));
+  }, []);
 
-  return (
+  return timesNotAvailable.length > 0 && (
     <Layout bodyClass="page-teams">
       <SiteSEO title="Appointments" />
 
@@ -20,7 +25,7 @@ const Appointments = props => {
                 <h1 dangerouslySetInnerHTML={{ __html: intro.html }} />
               </div>
               <div className="col-md-12 col-lg-7 order-2 order-md-1">
-                <AppointmentForm />
+                <AppointmentForm timesNotAvailable={timesNotAvailable} />
               </div>
             </div>
           </div>

@@ -75,6 +75,9 @@ type RequestHandlerFunction func(w http.ResponseWriter, r *http.Request)
 // The handleRequest function handles http requests using the defined RequestHandlerFunction above
 func (a *App) handleRequest(handler RequestHandlerFunction) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		//Allow CORS here By * or specific origin
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		handler(w, r)
 	}
 }

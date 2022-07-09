@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useDebugValue } from 'react';
 import DatePickerWithTimeInput from './DatePicker';
 import '../scss/components/_appointment-form.scss';
 import MenuItem from '@mui/material/MenuItem';
@@ -6,7 +6,7 @@ import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 
-const AppointmentForm = () => {
+const AppointmentForm = ({ timesNotAvailable }) => {
   const [age, setAge] = useState('');
   
   const [clientInfo, setClientInfo] = useState({
@@ -39,7 +39,7 @@ const AppointmentForm = () => {
     });
   };
 
-  console.log(clientInfo);
+  useDebugValue(timesNotAvailable); // used for debugging purposes
 
   return (
     <>
