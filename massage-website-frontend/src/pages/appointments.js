@@ -3,6 +3,7 @@ import { graphql } from 'gatsby';
 import SiteSEO from '../components/SiteSEO';
 import Layout from '../components/Layout';
 import AppointmentForm from '../components/AppointmentForm';
+import LocationMapPicker from '../components/GoogleMapLocationPicker';
 import { sendEmail, createAppointment, checkAvailability } from "../services/appointmentService";
 
 const Appointments = props => {
@@ -30,6 +31,7 @@ const Appointments = props => {
             </div>
           </div>
       </div>
+      <LocationMapPicker />
     </Layout>
   );
 };
