@@ -56,12 +56,12 @@ func (a *App) setRouters() {
 
 // HTTP CRUD wrapper function for HTTP GET
 func (a *App) Get(path string, f func(w http.ResponseWriter, r *http.Request)) {
-	a.ApiRouter.HandleFunc(path, f).Methods("GET")
+	a.ApiRouter.HandleFunc(path, f).Methods("GET", "OPTIONS")
 }
 
 // HTTP CRUD wrapper function for HTTP POST
 func (a *App) Post(path string, f func(w http.ResponseWriter, r *http.Request)) {
-	a.ApiRouter.HandleFunc(path, f).Methods("POST")
+	a.ApiRouter.HandleFunc(path, f).Methods("POST", "OPTIONS")
 }
 
 // The Run function runs the api on specified port number
@@ -75,9 +75,22 @@ type RequestHandlerFunction func(w http.ResponseWriter, r *http.Request)
 // The handleRequest function handles http requests using the defined RequestHandlerFunction above
 func (a *App) handleRequest(handler RequestHandlerFunction) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//Allow CORS here By * or specific origin
+
+		// Use below once deployed to Azure where origin header will be set
+		// if origin := r.Header.Get("Origin"); origin != "" {
+		// 	w.Header().Set("Access-Control-Allow-Origin", origin)
+		// 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		// 	w.Header().Set("Access-Control-Allow-Headers",
+		// 		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		// }
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers",
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+		if (*r).Method == "OPTIONS" {
+			return
+		}
 		handler(w, r)
 	}
 }

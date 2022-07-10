@@ -5,23 +5,43 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
+import { sendEmail, createAppointment } from "../services/appointmentService";
 
 const AppointmentForm = ({ timesNotAvailable }) => {
-  const [age, setAge] = useState('');
+
+  const [massageType, setMassageType] = useState("Full Body Massage");
   
   const [clientInfo, setClientInfo] = useState({
     'First Name': '',
     'Last Name': '',
     'Email': '',
     'Phone Number': '',
-    'Appointment Date': ''
+    'Appointment Date': '',
+    'Massage Type': massageType,
   });
 
   const userFields = ['First Name', 'Last Name', 'Email', 'Phone Number'];
-  const massageTypes = ["Foot Massage", "Full Body Massage", "Hot Stones Massage"];
+  const massageTypes = [ 
+    {
+      massage: "Foot Massage", 
+      price: 20
+    }, 
+    { 
+      massage: "Full Body Massage", 
+      price: 20
+    }, 
+    { 
+      massage: "Hot Stones Massage",
+      price: 20 
+    }
+  ];
 
   const onMassageChange = (event) => {
-    setAge(event.target.value);
+    setMassageType(event.target.value)
+    setClientInfo({
+      ...clientInfo,
+      'Massage Type': event.target.value
+    });
   }
 
   const getClient = e => {
@@ -35,8 +55,36 @@ const AppointmentForm = ({ timesNotAvailable }) => {
   const onDateChange = newDate => {
     setClientInfo({
       ...clientInfo,
-      'Appointment Date': newDate
+      'Appointment Date': new Date(newDate).toISOString()
     });
+  };
+
+  const handleSubmit = async (clientInfo) => {
+    console.log(clientInfo)
+    await sendEmail({
+      "subject": `Appointment for ${clientInfo["First Name"]} ${clientInfo["Last Name"]}`,
+      "message": {
+        "name": `${clientInfo["First Name"]} ${clientInfo["Last Name"]}`,
+        "date": clientInfo["Appointment Date"],
+        "time": clientInfo["Appointment Date"],
+        "type": massageType,
+        "price": 20
+      } 
+    });
+
+    await createAppointment({
+      'First Name': clientInfo["First Name"],
+      'Last Name': clientInfo["Last Name"],
+      'Email': clientInfo["Email"],
+      'Phone Number': clientInfo["Phone Number"],
+      'Appointment Date': "2022-07-10T19:00:00-07:00",
+      'Massage Type': massageType
+    });
+    // 2022-07-10T19:00:00-07:00
+    // Tue Feb 25 2020 10:03:00 GMT-0800
+    // const apptDateISOString = new Date(clientInfo["Appointment Date"]).toISOString();
+    // console.log(apptDateISOString)
+
   };
 
   useDebugValue(timesNotAvailable); // used for debugging purposes
@@ -69,22 +117,22 @@ const AppointmentForm = ({ timesNotAvailable }) => {
             <InputLabel id="massage-label-id">Massage Type*</InputLabel>
             <Select
               labelId="massage-label-id"
-              id="demo-simple-select"
-              value={age}
+              id="massage-type-select"
+              value={massageType}
               label="Massage Type*"
               onChange={ onMassageChange }
             >
               {
-                massageTypes.map(type => (
-                  <MenuItem value={`${type}`} >
-                      <em> { type } </em>
+                massageTypes.map((m, i) => (
+                  <MenuItem value={`${m.massage}`} key={`${m.massage}-${i}`}>
+                      <em> { m.massage } </em>
                   </MenuItem>
                 ))
               }
             </Select>
           </FormControl>
           <div className="submit-button">
-            <a href="#">
+            <a href="#" onClick={ async () => await handleSubmit(clientInfo) }>
               Submit
             </a>
           </div>

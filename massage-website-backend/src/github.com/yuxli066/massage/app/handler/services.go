@@ -23,7 +23,6 @@ func GetHealthCheck(w http.ResponseWriter, r *http.Request) {
 
 // Send appointment email out
 func SendEmail(w http.ResponseWriter, r *http.Request) {
-
 	var emailClient email.Email = email.Email{
 		CERTPATH:   "src/github.com/yuxli066/massage/certs/tlsCert.crt",
 		SERVERNAME: "smtp-relay.gmail.com",

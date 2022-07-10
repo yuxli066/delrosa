@@ -17,7 +17,6 @@ function DatePickerWithTimeInput({onDateChange}) {
   });
   return (
     <div style={{ 
-      
       display: 'flex' 
     }}>
       <DatePicker 
