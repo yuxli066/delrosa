@@ -152,7 +152,12 @@ func (g *GoogleCalendar) CheckAvailability() []BusyTimes {
 		log.Fatalf("Unable to retrieve Calendar's availability: %v", err)
 	}
 
-	var bTimeList []BusyTimes
+	var bTimeList = []BusyTimes{
+		{
+			StartTime: "none",
+			EndTime:   "none",
+		},
+	}
 	for _, times := range freeBusyRes.Calendars[g.USEREMAIL].Busy {
 		busyTimes := BusyTimes{
 			StartTime: times.Start,
