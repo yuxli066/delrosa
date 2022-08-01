@@ -58,7 +58,7 @@ const AppointmentForm = ({ timesNotAvailable }) => {
       'Appointment Date': new Date(newDate).toISOString()
     });
   };
-
+  
   const handleSubmit = async (clientInfo) => {
     console.log(clientInfo)
     await sendEmail({

@@ -1,50 +1,26 @@
 import React, { useEffect, useState } from 'react';
+import { List, ListItem, ListItemText, Divider, Box, Avatar } from '@mui/material';
+import { DatePickerCalendar } from 'react-nice-dates';
+import { enGB } from 'date-fns/locale';
 import { graphql } from 'gatsby';
 import SiteSEO from '../components/SiteSEO';
 import Layout from '../components/Layout';
-import AppointmentForm from '../components/AppointmentForm';
 import LocationMapPicker from '../components/GoogleMapLocationPicker';
 import { sendEmail, createAppointment, checkAvailability } from "../services/appointmentService";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import  ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import  ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
-// TODO: clean up css, too messy to keep in 1 file
-
-const mapContainer = {
-  display: 'flex',
-  flexDirection: 'row',
-};
-
-const style = {
-  width: "100%",
-  bgcolor: 'background.paper',
-  paddingTop: "0px !important"
-};
+import '../scss/components/_appointment-form.scss';
+import '../scss/style.scss';
+import 'react-nice-dates/build/style.css';
 
 const Appointments = props => {
 
-  const [value, setValue] = useState(0);
-  const [date, setDate] = useState(new Date());
+  const [ appointmentDate, setAppointmentDate ] = useState(new Date());
+  const [ timesNotAvailable, setTimesNotAvailable ] = useState([]);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleDateChange = (date) => {
+    console.log(date);
+    setAppointmentDate(date);
   };
 
-  const [ timesNotAvailable, setTimesNotAvailable ] = useState([]);
-  const incrementDate = () => {
-    const newDate = new Date(date.setDate(date.getDate() + 1));
-    setDate(newDate);
-  }
-  const decrementDate = () => {
-    const newDate = new Date(date.setDate(date.getDate() - 1))
-    setDate(newDate);
-  }
   useEffect(async () => {
     checkAvailability()
       .then((timesAvailable) => {
@@ -56,80 +32,42 @@ const Appointments = props => {
   return timesNotAvailable.length >= 1 && (
     <Layout bodyClass="page-teams">
       <SiteSEO title="Appointments" />
-      {/* <div className="intro">
-          <div className="container">
-            <div className="row justify-content-start">
-              <div className="col-md-12 col-lg-5 order-1 order-md-1">
-                <h1 dangerouslySetInnerHTML={{ __html: intro.html }} />
-              </div>
-              <div className="col-md-12 col-lg-7 order-2 order-md-1">
-                <AppointmentForm timesNotAvailable={timesNotAvailable} />
-              </div>
-            </div>
-          </div>
-      </div> */}
-      <Box sx={mapContainer}>
-          <LocationMapPicker />
-          {
-            /* <Tabs
-              value={value}
-              onChange={handleChange}
-              variant="scrollable"
-              scrollButtons="auto"
-              aria-label="scrollable auto tabs example"
-            >
-              <Tab label="Item One" />
-            </Tabs> */
-          }
-          <Box sx={style}>
-            <List sx={style} component="nav" aria-label="mailbox folders">
-                <Divider />
-                <ListItem style={{
-                    "textAlign": "center",
-                    "font-size": "34x",
-                    "minHeight": "4em",
-                    "display": "flex",
-                    "flexDirection": "row",
-                    "alignItems": "stretch",
-                  }}>
-                  <Button 
-                    variant="outlined" 
-                    startIcon={<ArrowBackIosIcon />}
-                    onClick={decrementDate}
-                  >Prev
-                  </Button>
-                  <ListItemText sx={{ 
-                    "paddingBlockStart": "0.5em",
-                    "font-weight": "900 !important",
-                    "font-family": "BlinkMacSystemFont,Helvetica,Arial,sans-serif",
-                    "font-size": "34x",
-                  }} 
-                    primary={`${date.toDateString()}`} />
-                  <Button 
-                    variant="outlined" 
-                    startIcon={<ArrowForwardIosIcon />}
-                    onClick={incrementDate}
-                  >Next
-                  </Button>
-                </ListItem>
-                <Divider />
-                <ListItem button style={{
-                    "textAlign": "center",
-                    "font-family": "BlinkMacSystemFont,Helvetica,Arial,sans-serif",
-                    "font-size": "34x"
-                  }}>
-                  <ListItemText primary="Location #1" />
-                </ListItem>
-                <Divider />
-                <ListItem button divider style={{
-                    "textAlign": "center",
-                    "font-family": "BlinkMacSystemFont,Helvetica,Arial,sans-serif",
-                    "font-size": "34px"
-                  }}>
-                  <ListItemText primary="Location #2" />
-                </ListItem>
-              </List>
-          </Box>
+      <Box className="pContainer">
+        <LocationMapPicker />
+        <Box className="calendarContainer">
+          <DatePickerCalendar
+            date={appointmentDate} 
+            onDateChange={handleDateChange} 
+            locale={enGB}
+          />
+        </Box>
+        <List className="locationContainer" component="nav" aria-label="mailbox folders">
+            <Divider />
+            <ListItem divider>
+              <ListItemText 
+                className="selectedDate"
+                primary={`${appointmentDate.toDateString()}`}
+              />  
+            </ListItem> 
+            <ListItem button divider className="listItemClass">
+              <Avatar 
+                alt="Location #1 Thumbnail"  
+                variant="square"
+                sx={{ width: 70, height: 70 }} 
+                src={"https://source.unsplash.com/random/200x200?sig=1"}
+              />
+              <ListItemText primary="Location #1" />
+            </ListItem>
+            <ListItem button divider className="listItemClass">
+              <Avatar 
+                alt="Location #2 Thumbnail"   
+                variant="square"
+                sx={{ width: 70, height: 70 }} 
+                src={"https://source.unsplash.com/random/200x200?sig=1"}
+              />
+              <ListItemText primary="Location #2" />
+            </ListItem>
+          </List>
       </Box>
     </Layout>
   );

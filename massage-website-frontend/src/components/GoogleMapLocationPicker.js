@@ -15,7 +15,7 @@ export default function GoogleMapLocationPicker() {
   
     return (
       // Important! Always set the container height explicitly
-      <div style={{ height: '91vh', width: '50%' }}>
+      <div style={{ minWidth: '30%' }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyDwcUJld3Tdz3hSLI6S9YLFMIOjuGJHKgY" }}
           defaultCenter={defaultProps.center}

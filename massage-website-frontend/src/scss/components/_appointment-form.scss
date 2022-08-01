@@ -90,43 +90,67 @@
   justify-content: space-around;
 }
 
-/* Date Picker Calendar */
-
-.date-wrapper {
-  align-items: center;
+.pContainer {
+  display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  margin-top: 3em;
-  border-color: black;
+  justify-content: center !important;
 }
 
-.nice-dates-navigation, .nice-dates-day {
-  color: #111;
+.locationContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 0px !important;
 }
 
-.nice-dates-popover {
-  box-shadow: none;
-  border: 1px solid #ddd;
-  border-radius: 2px;
-  max-width: 480px;
-  max-height: 480px;
-  transition: none;
-  top: 150px !important;
-  left: 300px !important;
+.calendarContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center !important;
+  min-width: 50%;
+  max-height: 85vh;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
-.date-input {
-  background-color: #fff;
-  border-radius: 6px;
-  border: 1px solid #d3dde6;
-  color: #0e3254;
-  display: block;
-  font-family: inherit;
-  font-size: inherit;
-  height: 42px;
-  outline: none;
-  padding: 0 12px;
-  transition: border-color .2s;
+.nice-dates-navigation {
+  height: 5em !important;
+  color: blue;
+  padding: 2em 0 2em 0;
+}
+
+.nice-dates-grid_container {
+  margin: auto;
+  gap: 1px 0 !important;
+}
+
+.nice-dates-day::before {
+  margin: auto;
+  width: 5em;
+  height: 5em;
+  border: 1px solid mediumpurple !important;
+  background-color: unset !important;
+  padding: 2em !important;
+}
+
+.nice-dates-day::after {
+  margin: auto;
+  max-width: 5em !important; 
+  max-height: 5em !important;
+  background-color: unset !important;
+  border: 1px solid mediumpurple !important;
+}
+
+.nice-dates-day {
+  background-color: unset !important;
+  border-color: mediumpurple;
+}
+
+.listItemClass {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  min-width: 30% !important;
+  flex: 1;
 }
 
 /* mixins */
