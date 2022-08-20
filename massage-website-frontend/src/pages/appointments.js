@@ -6,10 +6,12 @@ import { graphql } from 'gatsby';
 import SiteSEO from '../components/SiteSEO';
 import Layout from '../components/Layout';
 import LocationMapPicker from '../components/GoogleMapLocationPicker';
-import { sendEmail, createAppointment, checkAvailability } from "../services/appointmentService";
+import { checkAvailability } from "../services/appointmentService";
+import AniLink from "gatsby-plugin-transition-link/AniLink";
 import '../scss/components/_appointment-form.scss';
 import '../scss/style.scss';
 import 'react-nice-dates/build/style.css';
+
 
 const Appointments = props => {
 
@@ -21,7 +23,7 @@ const Appointments = props => {
     setAppointmentDate(date);
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     checkAvailability()
       .then((timesAvailable) => {
         setTimesNotAvailable(timesAvailable);
@@ -32,6 +34,7 @@ const Appointments = props => {
   return timesNotAvailable.length >= 1 && (
     <Layout bodyClass="page-teams">
       <SiteSEO title="Appointments" />
+
       <Box className="pContainer">
         <LocationMapPicker />
         <Box className="calendarContainer">
@@ -49,24 +52,41 @@ const Appointments = props => {
                 primary={`${appointmentDate.toDateString()}`}
               />  
             </ListItem> 
-            <ListItem button divider className="listItemClass">
-              <Avatar 
-                alt="Location #1 Thumbnail"  
-                variant="square"
-                sx={{ width: 70, height: 70 }} 
-                src={"https://source.unsplash.com/random/200x200?sig=1"}
-              />
-              <ListItemText primary="Location #1" />
-            </ListItem>
-            <ListItem button divider className="listItemClass">
-              <Avatar 
-                alt="Location #2 Thumbnail"   
-                variant="square"
-                sx={{ width: 70, height: 70 }} 
-                src={"https://source.unsplash.com/random/200x200?sig=1"}
-              />
-              <ListItemText primary="Location #2" />
-            </ListItem>
+            <AniLink 
+              to="/makeappointment/" 
+              state={{ location: 1 }}
+            >
+              <ListItem button divider sx={{ 
+                "height": "15em",
+                "flex-grow": "1"  
+              }}>
+                <Avatar 
+                  alt="Location #1 Thumbnail"  
+                  variant="square"
+                  sx={{ width: 70, height: 70 }} 
+                  src={"https://source.unsplash.com/random/200x200?sig=1"}
+                />
+                
+                  <ListItemText primary="Location #1" />
+              </ListItem>
+            </AniLink>
+            <AniLink 
+              to="/makeappointment/" 
+              state={{ location: 2 }}
+            >
+              <ListItem button divider sx={{ 
+                  "height": "15em",
+                  "flex-grow": "1" 
+                }}>
+                <Avatar 
+                  alt="Location #2 Thumbnail"   
+                  variant="square"
+                  sx={{ width: 70, height: 70 }} 
+                  src={"https://source.unsplash.com/random/200x200?sig=1"}
+                />
+                <ListItemText primary="Location #2" />
+              </ListItem>
+            </AniLink>
           </List>
       </Box>
     </Layout>

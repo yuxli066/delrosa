@@ -1,38 +1,49 @@
-.appointments-heading {
-    font-size: 2.5rem !important;
-    padding-bottom: 1em;
-}
-
 /* appointments box wrapper */
+$formWidth: 500px;
 
 .login-box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 600px;
-  padding: 50px;
-  transform: translate(-50%, -50%);
+  padding-top: 2%;
   box-sizing: border-box;
   border-radius: 10px;
-  border: 1px solid mediumpurple;
   display: flex;
   flex-direction: column;
-  justify-content : space-between;
   align-items: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.appointments-heading {
+  font-size: 2.5rem !important;
+  padding-bottom: 1em;
+}
+
+.timeslot-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center !important;
+  gap: 1em;
+  flex-flow: wrap;
+  width: $formWidth;
+}
+
+.timeslot {
+  width: 6em;
+  flex-basis: auto
 }
 
 /* user inputs */
 
 .login-box .user-box {
   position: relative;
-  min-width: 400px;
 }
 
 .login-box .user-box input {
-  width: 100%;
+  width: $formWidth;
   padding: 8px 0;
-  font-size: 16px;
-  color: black;
   margin-bottom: 30px;
   border: none;
   border-bottom: 1px solid black;
@@ -41,12 +52,13 @@
 }
 
 .login-box .user-box label {
+  width: $formWidth;
   position: absolute;
   bottom: 0.8rem;
   left: 0;
   padding: 10px 5px;
-  font-size: 20px;
   font-style: italic;
+  font-weight: 100 !important;
   pointer-events: none;
   transition: .5s;
 }
@@ -64,11 +76,10 @@
   color: black;
   font-size: 16px;
   text-decoration: none;
-  font-weight: bolder;
   text-transform: uppercase;
   overflow: hidden;
   transition: .5s;
-  margin-top: 40px;
+  margin-top: 20px;
   letter-spacing: 4px
 }
 
@@ -97,7 +108,8 @@
 }
 
 .locationContainer {
-  height: 100%;
+  height: 85vh;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -127,8 +139,8 @@
 
 .nice-dates-day::before {
   margin: auto;
-  width: 5em;
-  height: 5em;
+  max-width: 4em;
+  max-height: 4em;
   border: 1px solid mediumpurple !important;
   background-color: unset !important;
   padding: 2em !important;
@@ -136,10 +148,10 @@
 
 .nice-dates-day::after {
   margin: auto;
-  max-width: 5em !important; 
-  max-height: 5em !important;
-  background-color: unset !important;
+  max-width: 4em !important; 
+  max-height: 4em !important;
   border: 1px solid mediumpurple !important;
+  background-color: unset !important;
 }
 
 .nice-dates-day {
@@ -147,10 +159,9 @@
   border-color: mediumpurple;
 }
 
-.listItemClass {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  min-width: 30% !important;
-  flex: 1;
+.nice-dates-day.-selected:not(:hover) *, .nice-dates-day.-selected.-disabled * {
+  font-weight: bolder;
+  color: #8036ca !important;
 }
 
 /* mixins */

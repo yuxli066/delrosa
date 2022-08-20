@@ -1,26 +1,21 @@
 import React, { useState, useDebugValue } from 'react';
-import DatePickerWithTimeInput from './DatePicker';
-import '../scss/components/_appointment-form.scss';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
+import { MenuItem, Select, FormControl, InputLabel, Button, Box } from '@mui/material';
 import { sendEmail, createAppointment } from "../services/appointmentService";
+import '../scss/components/_appointment-form.scss';
 
 const AppointmentForm = ({ timesNotAvailable }) => {
 
   const [massageType, setMassageType] = useState("Full Body Massage");
   
   const [clientInfo, setClientInfo] = useState({
-    'First Name': '',
-    'Last Name': '',
+    'Full Name': '',
     'Email': '',
     'Phone Number': '',
     'Appointment Date': '',
     'Massage Type': massageType,
   });
 
-  const userFields = ['First Name', 'Last Name', 'Email', 'Phone Number'];
+  const userFields = ['Full Name', 'Email', 'Phone Number'];
   const massageTypes = [ 
     {
       massage: "Foot Massage", 
@@ -35,6 +30,33 @@ const AppointmentForm = ({ timesNotAvailable }) => {
       price: 20 
     }
   ];
+
+  const [ selectedTimeslot, setSelectedTimeslot ] = useState(null);
+
+  const availableTimeSlots = [
+    1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8
+  ];
+  
+  const [ tStates, setTStates ] = useState(() => {
+    const timeSlotButtonStates = {};
+    availableTimeSlots.forEach((t,i) => timeSlotButtonStates[`timeSlotState_${i}`] = false );
+    return timeSlotButtonStates;
+  });
+
+  const onTimeslotClick = (event) => {
+
+    setTStates(() => {
+      Object.keys(tStates).forEach((k) => tStates[k] = false );
+      return tStates
+    });
+
+    setTStates({
+      ...tStates,
+      [event.target.value]: true
+    });
+
+    setSelectedTimeslot(event.target.textContent);
+  }
 
   const onMassageChange = (event) => {
     setMassageType(event.target.value)
@@ -51,20 +73,13 @@ const AppointmentForm = ({ timesNotAvailable }) => {
       [eType]: e.target.value
     });
   };
-
-  const onDateChange = newDate => {
-    setClientInfo({
-      ...clientInfo,
-      'Appointment Date': new Date(newDate).toISOString()
-    });
-  };
   
   const handleSubmit = async (clientInfo) => {
     console.log(clientInfo)
     await sendEmail({
-      "subject": `Appointment for ${clientInfo["First Name"]} ${clientInfo["Last Name"]}`,
+      "subject": `Appointment for ${clientInfo["Full Name"]}`,
       "message": {
-        "name": `${clientInfo["First Name"]} ${clientInfo["Last Name"]}`,
+        "name": `${clientInfo["Full Name"]}`,
         "date": clientInfo["Appointment Date"],
         "time": clientInfo["Appointment Date"],
         "type": massageType,
@@ -73,18 +88,12 @@ const AppointmentForm = ({ timesNotAvailable }) => {
     });
 
     await createAppointment({
-      'First Name': clientInfo["First Name"],
-      'Last Name': clientInfo["Last Name"],
+      'Full Name': clientInfo["Full Name"],
       'Email': clientInfo["Email"],
       'Phone Number': clientInfo["Phone Number"],
       'Appointment Date': "2022-07-10T19:00:00-07:00",
       'Massage Type': massageType
     });
-    // 2022-07-10T19:00:00-07:00
-    // Tue Feb 25 2020 10:03:00 GMT-0800
-    // const apptDateISOString = new Date(clientInfo["Appointment Date"]).toISOString();
-    // console.log(apptDateISOString)
-
   };
 
   useDebugValue(timesNotAvailable); // used for debugging purposes
@@ -95,7 +104,7 @@ const AppointmentForm = ({ timesNotAvailable }) => {
         <div>
           <h2 className="appointments-heading">Appointments</h2>
         </div>
-        <form>
+        <form className="login-form">
           {
             userFields.map(fieldName => (
               <div className="user-box" key={fieldName}>
@@ -110,9 +119,21 @@ const AppointmentForm = ({ timesNotAvailable }) => {
               </div>
             ))
           }
-          <div className="date-wrapper">
-            <DatePickerWithTimeInput onDateChange={onDateChange} />
-          </div>
+          <Box className="timeslot-container">
+            {
+              availableTimeSlots.map((time,i) => (
+                <Box className="timeslot" key={`timeSlotState_${i}`}>
+                  <Button 
+                    variant={tStates[`timeSlotState_${i}`] ? 'contained' : 'outlined' } 
+                    onClick={e => onTimeslotClick(e) }
+                    value={ `timeSlotState_${i}` }
+                  >
+                    11:00 PM
+                  </Button>
+                </Box>
+              ))
+            }
+          </Box>
           <FormControl fullWidth sx={{ marginTop: "2em" }}>
             <InputLabel id="massage-label-id">Massage Type*</InputLabel>
             <Select
