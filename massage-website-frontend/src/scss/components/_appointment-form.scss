@@ -1,10 +1,12 @@
 /* appointments box wrapper */
-$formWidth: 500px;
+$formWidth: 44em;
+$inputWidth: 38em;
+
+/* form container */
 
 .login-box {
-  padding-top: 2%;
+  padding-top: 1%;
   box-sizing: border-box;
-  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,13 +16,15 @@ $formWidth: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 2em 0 2em;
 }
 
 .appointments-heading {
   font-size: 2.5rem !important;
-  padding-bottom: 1em;
+  padding-bottom: 1rem;
 }
 
+/* timeslots */
 .timeslot-container {
   display: flex;
   flex-direction: row;
@@ -28,6 +32,7 @@ $formWidth: 500px;
   gap: 1em;
   flex-flow: wrap;
   width: $formWidth;
+  margin: 1.5em 0;
 }
 
 .timeslot {
@@ -35,36 +40,14 @@ $formWidth: 500px;
   flex-basis: auto
 }
 
-/* user inputs */
-
-.login-box .user-box {
-  position: relative;
+/* client info inputs */
+.client-info-inputs {
+  display: flex;
+  flex-direction: column;
 }
 
-.login-box .user-box input {
-  width: $formWidth;
-  padding: 8px 0;
-  margin-bottom: 30px;
-  border: none;
-  border-bottom: 1px solid black;
-  outline: none;
-  background: transparent;
-}
-
-.login-box .user-box label {
-  width: $formWidth;
-  position: absolute;
-  bottom: 0.8rem;
-  left: 0;
-  padding: 10px 5px;
-  font-style: italic;
-  font-weight: 100 !important;
-  pointer-events: none;
-  transition: .5s;
-}
-
-.login-box .user-box input:focus ~.input-label {
-  display: none;
+.client-info-inputs > input {
+  min-width: $inputWidth;
 }
 
 /* submit btn */
@@ -84,13 +67,13 @@ $formWidth: 500px;
 }
 
 .login-box a:hover {
-  background: mediumpurple;
-  color: black;
+  background: #1976d2;
+  color: white;
   border-radius: 5px;
-  box-shadow: 0 0 1px mediumpurple,
-  0 0 5px mediumpurple,
-  0 0 5px mediumpurple,
-  0 0 50px mediumpurple;
+  box-shadow: 0 0 1px #1976d2,
+  0 0 5px #1976d2,
+  0 0 5px #1976d2,
+  0 0 50px #1976d2;
 }
 
 .submit-button {
@@ -100,6 +83,8 @@ $formWidth: 500px;
   flex-direction: row;
   justify-content: space-around;
 }
+
+/* appointments date selection */
 
 .pContainer {
   display: flex;
@@ -141,7 +126,7 @@ $formWidth: 500px;
   margin: auto;
   max-width: 4em;
   max-height: 4em;
-  border: 1px solid mediumpurple !important;
+  border: 1px solid #1976d2 !important;
   background-color: unset !important;
   padding: 2em !important;
 }
@@ -150,18 +135,29 @@ $formWidth: 500px;
   margin: auto;
   max-width: 4em !important; 
   max-height: 4em !important;
-  border: 1px solid mediumpurple !important;
+  border: 1px solid #1976d2 !important;
   background-color: unset !important;
 }
 
 .nice-dates-day {
   background-color: unset !important;
-  border-color: mediumpurple;
+  border-color: #1976d2;
 }
 
 .nice-dates-day.-selected:not(:hover) *, .nice-dates-day.-selected.-disabled * {
   font-weight: bolder;
-  color: #8036ca !important;
+  color: #1976d2 !important;
+}
+
+.selection-container {
+  min-width: $formWidth;
+  flex-direction: row !important;
+  justify-content: center;
+  gap: 1em;
+}
+
+.select-class {
+  width: 12em;
 }
 
 /* mixins */
