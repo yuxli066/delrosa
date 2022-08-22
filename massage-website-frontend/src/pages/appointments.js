@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { List, ListItem, ListItemText, Divider, Box, Avatar } from '@mui/material';
 import { DatePickerCalendar } from 'react-nice-dates';
 import { enGB } from 'date-fns/locale';
-import { graphql } from 'gatsby';
 import SiteSEO from '../components/SiteSEO';
 import Layout from '../components/Layout';
 import LocationMapPicker from '../components/GoogleMapLocationPicker';
@@ -54,7 +53,9 @@ const Appointments = props => {
             </ListItem> 
             <AniLink 
               to="/makeappointment/" 
-              state={{ location: 1 }}
+              state={{ 
+                location: 1 
+              }}
             >
               <ListItem button divider sx={{ 
                 "height": "15em",
@@ -72,7 +73,9 @@ const Appointments = props => {
             </AniLink>
             <AniLink 
               to="/makeappointment/" 
-              state={{ location: 2 }}
+              state={{ 
+                location: 2
+              }}
             >
               <ListItem button divider sx={{ 
                   "height": "15em",
@@ -92,19 +95,5 @@ const Appointments = props => {
     </Layout>
   );
 };
-
-export const query = graphql`
-  query TeamQuery {
-    intro: markdownRemark(fileAbsolutePath: {regex: "/(appointments.md)/"}) {
-      html
-      frontmatter {
-        intro_image
-        intro_image_absolute
-        intro_image_hide_on_mobile
-        title
-      }
-    }
-  }
-`;
 
 export default Appointments;

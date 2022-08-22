@@ -19,8 +19,8 @@ const pricesObject = {
   "Body/Foot Massage" : [ " 60 minutes - $40 " ]
 };
 
-const AppointmentForm = ({ timesNotAvailable }) => {
-
+const AppointmentForm = props => {
+  
   const [ massageType, setMassageType ] = useState('placeholder');
   const [ selectedTimeslot, setSelectedTimeslot ] = useState();
   const [ prices, setPrices ] = useState([]);
@@ -98,7 +98,7 @@ const AppointmentForm = ({ timesNotAvailable }) => {
 
   };
 
-  useDebugValue(timesNotAvailable); // used for debugging purposes
+  useDebugValue(props.timesNotAvailable); // used for debugging purposes
 
   return (
     <>
@@ -107,94 +107,94 @@ const AppointmentForm = ({ timesNotAvailable }) => {
           <h2 className="appointments-heading">Appointments</h2>
         </div>
         <form className="login-form">
-        <Box
-          component="form"
-          sx={{
-            '& > :not(style)': { 
-                m: 1, 
-                width: '50ch' 
-            }
-          }}
-          className="client-info-inputs"
-          noValidate
-          autoComplete="off"
-        >
-            {
-              userFields.map(fieldName => (
-                <TextField id={`${fieldName}-id`} label={fieldName} variant="standard" />
-              ))
-            }
-          </Box>
-          <Box className="timeslot-container">
-            {
-              availableTimeSlots.map((time,i) => (
-                <Box className="timeslot" key={`timeSlotState_${i}`}>
-                  <Button 
-                    variant={tStates[`timeSlotState_${i}`] ? 'contained' : 'outlined' } 
-                    onClick={e => onTimeslotClick(e) }
-                    value={ `timeSlotState_${i}` }
-                    size="large"
-                  >
-                    11:00 PM
-                  </Button>
-                </Box>
-              ))
-            }
-          </Box>
-          <Box >
-            <FormControl required className="selection-container" fullWidth sx={{ marginTop: "2em" }}>
-              <InputLabel id="massage-type-id">Massage Type*</InputLabel>
-              <Select
-                labelId="massage-type-id"
-                id="massage-type-select"
-                value={ massageType }
-                label="Massage Type*"
-                onChange={ onMassageChange }
-                className="select-class"
-              >
-                {
-                  massageTypes.map((m, i) => (
-                    <MenuItem value={`${m.massage}`} key={`${m.massage}-${i}`}>
-                        <em> { m.massage } </em>
-                    </MenuItem>
-                  ))
+            <Box
+              component="form"
+              sx={{
+                '& > :not(style)': { 
+                    m: 1, 
+                    width: '50ch' 
                 }
-              </Select>
-              <br />
-              <br />
+              }}
+              className="client-info-inputs"
+              noValidate
+              autoComplete="off"
+            >
               {
-                massageType !== 'placeholder' && (
-                  <FormControl required fullWidth>
-                    <InputLabel id="massage-prices-id">Massage Prices*</InputLabel>
-                    <Select
-                      labelId="massage-prices-id"
-                      id="massage-prices-select"
-                      value={ selectedPrice }
-                      label="Massage Prices*"
-                      onChange={ onPriceChange }
-                      className="select-class"
-                    >
-                      {
-                        prices.length > 0 && 
-                          ( 
-                            prices.map((m, i) => (
-                              <MenuItem value={`${m}`} key={`${m}-${i}`}>
-                                <em> { m } </em>
-                              </MenuItem>
-                            ))
-                          )
-                      }
-                    </Select>
-                  </FormControl>
-                )
+                userFields.map(fieldName => (
+                  <TextField id={`${fieldName}-id`} label={fieldName} variant="standard" />
+                ))
               }
-            </FormControl>
-          </Box>
-          <div className="submit-button">
-            <a href="#" onClick={ async () => await handleSubmit(clientInfo) }>
-              Submit
-            </a>
-          </div>
+            </Box>
+            <Box className="timeslot-container">
+              {
+                availableTimeSlots.map((time,i) => (
+                  <Box className="timeslot" key={`timeSlotState_${i}`}>
+                    <Button 
+                      variant={tStates[`timeSlotState_${i}`] ? 'contained' : 'outlined' } 
+                      onClick={e => onTimeslotClick(e) }
+                      value={ `timeSlotState_${i}` }
+                      size="large"
+                    >
+                      11:00 PM
+                    </Button>
+                  </Box>
+                ))
+              }
+            </Box>
+            <Box >
+              <FormControl required className="selection-container" fullWidth sx={{ marginTop: "2em" }}>
+                <InputLabel id="massage-type-id">Massage Type*</InputLabel>
+                <Select
+                  labelId="massage-type-id"
+                  id="massage-type-select"
+                  value={ massageType }
+                  label="Massage Type*"
+                  onChange={ onMassageChange }
+                  className="select-class"
+                >
+                  {
+                    massageTypes.map((m, i) => (
+                      <MenuItem value={`${m.massage}`} key={`${m.massage}-${i}`}>
+                          <em> { m.massage } </em>
+                      </MenuItem>
+                    ))
+                  }
+                </Select>
+                <br />
+                <br />
+                {
+                  massageType !== 'placeholder' && (
+                    <FormControl required fullWidth>
+                      <InputLabel id="massage-prices-id">Massage Prices*</InputLabel>
+                      <Select
+                        labelId="massage-prices-id"
+                        id="massage-prices-select"
+                        value={ selectedPrice }
+                        label="Massage Prices*"
+                        onChange={ onPriceChange }
+                        className="select-class"
+                      >
+                        {
+                          prices.length > 0 && 
+                            ( 
+                              prices.map((m, i) => (
+                                <MenuItem value={`${m}`} key={`${m}-${i}`}>
+                                  <em> { m } </em>
+                                </MenuItem>
+                              ))
+                            )
+                        }
+                      </Select>
+                    </FormControl>
+                  )
+                }
+              </FormControl>
+            </Box>
+            <div className="submit-button">
+              <a href="#" onClick={ async () => await handleSubmit(clientInfo) }>
+                Submit
+              </a>
+            </div>
         </form>
       </div>
     </>
