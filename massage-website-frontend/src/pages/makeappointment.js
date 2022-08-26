@@ -4,14 +4,16 @@ import Layout from '../components/Layout';
 import { graphql } from 'gatsby';
 import { checkAvailability } from "../services/appointmentService";
 import AppointmentForm from '../components/AppointmentForm';
+import { Box } from '@mui/material';
+import '../scss/components/_appointment-form.scss';
 
 const MakeAppointment = ({location, data }) => {
   
   const formData = data.formData; 
   // eslint-disable-next-line max-len
   const formImgClasses = `intro-image ${formData.frontmatter.image_absolute && 'intro-image-absolute'} ${formData.frontmatter.image_hide_on_mobile && 'intro-image-hide-mobile'}`;
-  
-  const [ timesNotAvailable, setTimesNotAvailable ] = useState([]);
+  console.log(location)
+  const [ timesNotAvailable, setTimesNotAvailable ] = useState(null);
 
   useEffect(() => {
     checkAvailability()
@@ -21,19 +23,19 @@ const MakeAppointment = ({location, data }) => {
       });
   }, []);
 
-  return timesNotAvailable.length >= 1 && (
+  return timesNotAvailable && (
     <Layout bodyClass="page-teams">
       <SiteSEO title="AppointmentForm" />
-      <div className="col-sm-12 col-lg-5">
-              <img 
-                alt={formData.frontmatter.image_alt} 
-                className={formImgClasses} 
-                src={formData.frontmatter.image} 
-              />
-      </div>
-      <div className="col-sm-12 col-lg-5">
-        <AppointmentForm />
-      </div>
+      <Box className="AppointmentFormContainer">
+        <Box className="AppointmentFormImage">
+          <img 
+            alt={formData.frontmatter.image_alt} 
+            className={formImgClasses} 
+            src={formData.frontmatter.image} 
+          />
+        </Box>
+        <AppointmentForm timeslots={location.state.timeslots}/>
+      </Box>
     </Layout>
   );
 };

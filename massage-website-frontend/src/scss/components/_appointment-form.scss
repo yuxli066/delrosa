@@ -104,9 +104,9 @@ $inputWidth: 38em;
 .calendarContainer {
   display: flex;
   flex-direction: column;
-  justify-content: center !important;
+  justify-content: start !important;
   min-width: 50%;
-  max-height: 85vh;
+  height: calc(100vh - 71.8px);
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.12);
 }
@@ -158,6 +158,20 @@ $inputWidth: 38em;
 
 .select-class {
   width: 12em;
+}
+
+.AppointmentFormContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.AppointmentFormImage {
+  img {
+    height: calc(100vh - 71.8px);
+  }
+  div {
+    height: calc(100vh - 71.8px);
+  }
 }
 
 /* mixins */
