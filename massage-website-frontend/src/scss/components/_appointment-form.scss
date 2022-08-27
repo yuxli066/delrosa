@@ -108,6 +108,7 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 .appointment-form-sub {
@@ -120,6 +121,11 @@ a {
 .appointments-heading {
   font-size: 2.5rem !important;
   padding-bottom: 1rem;
+}
+
+.massageDate {
+  color: #1976d2;
+  font-weight: 600;
 }
 
 // Form - selection dropdowns
@@ -152,6 +158,7 @@ a {
 .client-info-inputs {
   display: flex;
   flex-direction: column;
+  padding-bottom: 2em;
 }
 
 .client-info-inputs > input {

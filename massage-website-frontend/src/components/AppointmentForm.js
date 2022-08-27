@@ -127,7 +127,10 @@ const AppointmentForm = props => {
     <>
       <Box className="appointment-form">
         <Box>
-          <h2 className="appointments-heading">Appointments</h2>
+          <h2 className="appointments-heading">{ props.massageParlorName }</h2>
+        </Box>
+        <Box className="massageDate">
+          { props.selectedDate }
         </Box>
         <form className="appointment-form-sub">
             <Box

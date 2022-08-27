@@ -34,7 +34,11 @@ const MakeAppointment = ({location, data }) => {
             src={formData.frontmatter.image} 
           />
         </Box>
-        <AppointmentForm timeslots={location.state.timeslots}/>
+        <AppointmentForm 
+          massageParlorName={location.state.location}
+          timeslots={location.state.timeslots} 
+          selectedDate={location.state.selectedDate} 
+        />
       </Box>
     </Layout>
   );

@@ -86,7 +86,6 @@ const Appointments = props => {
   return timesNotAvailable !== null && (
     <Layout bodyClass="page-teams">
       <SiteSEO title="Appointments" />
-
       <Box className="pContainer">
         <LocationMapPicker />
         <Box className="calendarContainer">
@@ -100,13 +99,18 @@ const Appointments = props => {
             {appointmentDate.toDateString()}
           </Box> */}
         </Box>
-        <List className="locationContainer" component="nav" aria-label="massage parlor location selections">
+        <List 
+          className="locationContainer" 
+          component="nav" 
+          aria-label="massage parlor location selections"
+        >
             <Divider />
             <AniLink 
               to="/makeappointment/" 
               state={{ 
                 location: "Del Rosa Massage",  
-                timeslots: DelRosaTimes
+                timeslots: DelRosaTimes, 
+                selectedDate: appointmentDate.toDateString()
               }}
             >
               <ListItem 
@@ -118,7 +122,8 @@ const Appointments = props => {
               to="/makeappointment/" 
               state={{ 
                 location: "Aster Massage", 
-                timeslots: AsterTimes
+                timeslots: AsterTimes,
+                selectedDate: appointmentDate.toDateString()
               }}
             >
               <ListItem 
