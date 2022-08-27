@@ -94,10 +94,11 @@ const Appointments = props => {
             date={appointmentDate} 
             onDateChange={handleDateChange} 
             locale={enGB}
+            className="calendar"
           />
-          <Box className="selectedDate" >
+          {/* <Box className="selectedDate" >
             {appointmentDate.toDateString()}
-          </Box>
+          </Box> */}
         </Box>
         <List className="locationContainer" component="nav" aria-label="massage parlor location selections">
             <Divider />

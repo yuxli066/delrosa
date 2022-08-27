@@ -26,32 +26,66 @@ a {
   border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
+// .selectedDate {
+//   flex-grow: 2 !important;
+//   width: 100%;
+//   align-content: center;
+// }
+
+.nice-dates-navigation_previous {
+  z-index: 100 !important;
+}
+
+.nice-dates-navigation_next {
+  z-index: 100 !important;
+}
+
+.nice-dates-navigation_current {
+  font-size: 23px !important;
+}
+
 .nice-dates-navigation {
   height: 5em !important;
   color: blue;
-  padding: 2em 0 2em 0;
+  z-index: 100 !important;
+  background-color: white;
+}
+
+.nice-dates-week-header {
+  z-index: 100 !important;
+  background-color: white !important;
+}
+
+.nice-dates-grid {
+  overflow: visible !important;
+  z-index: 1 !important; 
 }
 
 .nice-dates-grid_container {
+  height: 100vh !important;
   margin: auto;
   gap: 1px 0 !important;
+  z-index: 1 !important; 
 }
 
 .nice-dates-day::before {
   margin: auto;
   max-width: 4em;
   max-height: 4em;
-  border: 1px solid #1976d2 !important;
+  border: 1.5px solid #1976d2 !important;
   background-color: unset !important;
-  padding: 2em !important;
+  padding: 3em !important;
+  z-index: 1 !important; 
 }
 
 .nice-dates-day::after {
   margin: auto;
   max-width: 4em !important; 
   max-height: 4em !important;
-  border: 1px solid #1976d2 !important;
+  padding: 3em !important;
+  border: 1.5px solid #1976d2 !important;
   background-color: unset !important;
+  z-index: 1 !important; 
 }
 
 .nice-dates-day {
