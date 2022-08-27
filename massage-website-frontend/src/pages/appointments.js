@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { List, ListItem, Divider, Box } from '@mui/material';
 import { DatePickerCalendar } from 'react-nice-dates';
 import { enGB } from 'date-fns/locale';
+import { getDay } from 'date-fns';
 import SiteSEO from '../components/SiteSEO';
 import Layout from '../components/Layout';
 import LocationMapPicker from '../components/GoogleMapLocationPicker';
@@ -75,11 +76,19 @@ const Appointments = props => {
     setAppointmentDate(date);
   };
 
+  const modifiers = {
+    disabled: (date) => new Date(date) < new Date(timesNotAvailable.TODAY),
+    highlight: (date) => new Date(date) < new Date(timesNotAvailable.TODAY)
+  }
+
+  const modifiersClassNames = {
+    highlight: '-highlight'
+  }
+
   useEffect(() => {
     checkAvailability()
       .then((timesAvailable) => {
         setTimesNotAvailable(timesAvailable);
-        console.log(timesAvailable)
       });
   }, []);
 
@@ -94,6 +103,8 @@ const Appointments = props => {
             onDateChange={handleDateChange} 
             locale={enGB}
             className="calendar"
+            modifiers={modifiers}
+            modifiersClassNames={modifiersClassNames}
           />
           {/* <Box className="selectedDate" >
             {appointmentDate.toDateString()}

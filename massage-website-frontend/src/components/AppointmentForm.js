@@ -98,7 +98,7 @@ const AppointmentForm = props => {
 
   const onPriceChange = (event) => {
     setSelectedPrice(event.target.value);
-  }
+  };
   
   const handleSubmit = async (clientInfo) => {
     console.log(clientInfo)

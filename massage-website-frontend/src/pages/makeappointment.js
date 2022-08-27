@@ -19,7 +19,6 @@ const MakeAppointment = ({location, data }) => {
     checkAvailability()
       .then((timesAvailable) => {
         setTimesNotAvailable(timesAvailable);
-        console.log(timesAvailable)
       });
   }, []);
 
