@@ -1,104 +1,19 @@
-/* appointments box wrapper */
+/* ==================== Globals ==================== */
+@import url('https://fonts.googleapis.com/css?family=DynaPuff&display=swap');
 $formWidth: 44em;
 $inputWidth: 38em;
-
-/* form container */
-
-.login-box {
-  padding-top: 1%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+a {
+  text-decoration: none !important; 
+  flex-grow: 4;
 }
+/* ==================== Globals ==================== */
 
-.login-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 2em 0 2em;
-}
-
-.appointments-heading {
-  font-size: 2.5rem !important;
-  padding-bottom: 1rem;
-}
-
-/* timeslots */
-.timeslot-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center !important;
-  gap: 1em;
-  flex-flow: wrap;
-  width: $formWidth;
-  margin: 1.5em 0;
-}
-
-.timeslot {
-  width: 6em;
-  flex-basis: auto
-}
-
-/* client info inputs */
-.client-info-inputs {
-  display: flex;
-  flex-direction: column;
-}
-
-.client-info-inputs > input {
-  min-width: $inputWidth;
-}
-
-/* submit btn */
-
-.login-box form a {
-  position: relative;
-  display: inline-block;
-  padding: 10px 25px;
-  color: black;
-  font-size: 16px;
-  text-decoration: none;
-  text-transform: uppercase;
-  overflow: hidden;
-  transition: .5s;
-  margin-top: 20px;
-  letter-spacing: 4px
-}
-
-.login-box a:hover {
-  background: #1976d2;
-  color: white;
-  border-radius: 5px;
-  box-shadow: 0 0 1px #1976d2,
-  0 0 5px #1976d2,
-  0 0 5px #1976d2,
-  0 0 50px #1976d2;
-}
-
-.submit-button {
-  margin-top: 1em;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-around;
-}
-
-/* appointments date selection */
+/* ==================== Appointments date selection ==================== */
 
 .pContainer {
   display: flex;
   flex-direction: row;
   justify-content: center !important;
-}
-
-.locationContainer {
-  height: 85vh;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  padding: 0px !important;
 }
 
 .calendarContainer {
@@ -149,6 +64,31 @@ $inputWidth: 38em;
   color: #1976d2 !important;
 }
 
+/* ==================== Appointments Date Selection ==================== */
+
+/* ==================== Appointment Form Page ==================== */
+// Form - Containers
+.appointment-form {
+  padding-top: 1%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.appointment-form-sub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 2em 0 2em;
+}
+
+.appointments-heading {
+  font-size: 2.5rem !important;
+  padding-bottom: 1rem;
+}
+
+// Form - selection dropdowns
 .selection-container {
   min-width: $formWidth;
   flex-direction: row !important;
@@ -174,61 +114,137 @@ $inputWidth: 38em;
   }
 }
 
-/* mixins */
-
-@mixin animationNumber($num) {
-  width: 100%;
-  @if $num == 0 {
-    top: 0;
-    left: -100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, black);
-    @keyframes btn-anim#{$num + 1} {
-      0% {
-        left: -100%;
-      }
-      50%,100% {
-        left: 100%;
-      }
-    }
-  } @else if $num == 1 {
-    top: -100%;
-    right: 0;
-    width: 2px;
-    background: linear-gradient(180deg, transparent, black);
-    @keyframes btn-anim#{$num + 1} {
-      0% {
-        top: -100%;
-      }
-      50%,100% {
-        top: 100%;
-      }
-    }
-  } @else if $num == 2 {
-    bottom: 0;
-    right: -100%;
-    height: 2px;
-    background: linear-gradient(270deg, transparent, black);
-    @keyframes btn-anim#{$num + 1} {
-      0% {
-        right: -100%;
-      }
-      50%,100% {
-        right: 100%;
-      }
-    }
-  } @else if $num == 3 {
-    bottom: -100%;
-    left: 0;
-    width: 2px;
-    background: linear-gradient(360deg, transparent, black);
-    @keyframes btn-anim#{$num + 1} {
-      0% {
-        bottom: -100%;
-      }
-      50%,100% {
-        bottom: 100%;
-      }
-    }
-  }
+// Form - inputs
+.client-info-inputs {
+  display: flex;
+  flex-direction: column;
 }
+
+.client-info-inputs > input {
+  min-width: $inputWidth;
+}
+
+// Form - submit btn
+.appointment-form form a {
+  position: relative;
+  display: inline-block;
+  padding: 10px 25px;
+  color: black;
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: .5s;
+  margin-top: 20px;
+  letter-spacing: 4px
+}
+
+.appointment-form a:hover {
+  background: #1976d2;
+  color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 1px #1976d2,
+  0 0 5px #1976d2,
+  0 0 5px #1976d2,
+  0 0 50px #1976d2;
+}
+
+.submit-button {
+  margin-top: 1em;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+// Form - timeslots
+.timeslot-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center !important;
+  gap: 1em;
+  flex-flow: wrap;
+  width: $formWidth;
+  margin: 1.5em 0;
+}
+
+.timeslot {
+  width: 6em;
+  flex-basis: auto
+}
+/* ==================== Appointment Form Page ==================== */
+
+/* ==================== Massage Parlor Selection List ==================== */
+
+.locationContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 0px !important;
+}
+
+.delRosaMassage {
+  height: 100%;
+  border-radius: 2px;
+  background-image: url("https://source.unsplash.com/random/200x200?sig=1");
+  background-size: cover;
+  opacity: 0.9;
+}
+
+.delRosaMassage::before {
+  content: "";
+  color: white;
+  transition: 0.4s ease-in-out;
+  z-index: 2;
+  align-content: center;
+  margin: auto;
+}
+
+.delRosaMassage:hover::before {
+  content: "Del Rosa Massage";
+  color: white;
+  font-size: 2em;
+  font-family: 'DynaPuff', cursive;
+  transition: 0.4s ease-in;
+  z-index: 2;
+  background-size: cover;
+}
+
+.delRosaMassage:hover {
+  transition: 0.6s ease-in;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(30, 1, 1, 0.5)), url("https://source.unsplash.com/random/200x200?sig=1");
+}
+
+.asterMassage {
+  height: 100%;
+  border-radius: 2px;
+  background-image: url("https://source.unsplash.com/random/200x200?sig=1");
+  background-size: cover;
+  opacity: 0.9;
+}
+
+.asterMassage::before {
+  content: "";
+  color: white;
+  transition: 0.4s ease-in-out;
+  z-index: 2;
+  align-content: center;
+  margin: auto;
+}
+
+.asterMassage:hover::before {
+  content: "Aster Massage";
+  color: white;
+  font-size: 2em;
+  font-family: 'DynaPuff', cursive;
+  transition: 0.4s ease-in;
+  z-index: 2;
+  background-size: cover;
+}
+
+.asterMassage:hover {
+  transition: 0.6s ease-in;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(30, 1, 1, 0.5)), url("https://source.unsplash.com/random/200x200?sig=1");
+}
+
+/* ==================== Massage Parlor Selection List ==================== */

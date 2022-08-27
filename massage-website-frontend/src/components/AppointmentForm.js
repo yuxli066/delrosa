@@ -125,11 +125,11 @@ const AppointmentForm = props => {
 
   return (
     <>
-      <Box className="login-box">
+      <Box className="appointment-form">
         <Box>
           <h2 className="appointments-heading">Appointments</h2>
         </Box>
-        <form className="login-form">
+        <form className="appointment-form-sub">
             <Box
               component="form"
               sx={{
