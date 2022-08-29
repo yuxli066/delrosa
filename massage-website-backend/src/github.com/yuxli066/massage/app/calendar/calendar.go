@@ -208,19 +208,27 @@ func (g *GoogleCalendar) CheckAvailability() TimesAvailable {
 		e_time, _ := time.Parse(time.RFC3339, times.End)
 		s_hr, s_min, _ := s_time.Clock()
 		e_hr, e_min, _ := e_time.Clock()
+		s_ampm := "AM"
+		e_ampm := "AM"
 
-		if s_hr > 12 {
-			s_hr = s_hr - 12
+		if s_hr >= 12 {
+			s_ampm = "PM"
+			if s_hr > 12 {
+				s_hr = s_hr - 12
+			}
 		}
 
-		if e_hr > 12 {
-			e_hr = e_hr - 12
+		if e_hr >= 12 {
+			e_ampm = "PM"
+			if e_hr > 12 {
+				e_hr = e_hr - 12
+			}
 		}
 
 		// append busy times to the available schedules
 		ts := TimeSlot{
-			STARTTIME: fmt.Sprint(s_hr) + ":" + fmt.Sprintf("%02d", s_min),
-			ENDTIME:   fmt.Sprint(e_hr) + ":" + fmt.Sprintf("%02d", e_min),
+			STARTTIME: fmt.Sprint(s_hr) + ":" + fmt.Sprintf("%02d", s_min) + " " + s_ampm,
+			ENDTIME:   fmt.Sprint(e_hr) + ":" + fmt.Sprintf("%02d", e_min) + " " + e_ampm,
 		}
 		T_available.SCHEDULE[dateString] = append(T_available.SCHEDULE[dateString], ts)
 	}

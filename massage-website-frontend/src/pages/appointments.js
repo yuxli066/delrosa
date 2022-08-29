@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { List, ListItem, Divider, Box } from '@mui/material';
 import { DatePickerCalendar } from 'react-nice-dates';
 import { enGB } from 'date-fns/locale';
-import { getDay } from 'date-fns';
 import SiteSEO from '../components/SiteSEO';
 import Layout from '../components/Layout';
 import LocationMapPicker from '../components/GoogleMapLocationPicker';
@@ -12,7 +11,7 @@ import '../scss/components/_appointment-form.scss';
 import '../scss/style.scss';
 import 'react-nice-dates/build/style.css';
 
-const DelRosaTimes = [
+const DelRosaTimes_default = [
   "9:30 AM", 
   "10:00 AM", 
   "10:30 AM", 
@@ -40,7 +39,7 @@ const DelRosaTimes = [
   "9:30 PM"
 ]; 
 
-const AsterTimes = [
+const AsterTimes_default = [
   "9:30 AM", 
   "10:00 AM", 
   "10:30 AM", 
@@ -73,6 +72,7 @@ const Appointments = props => {
   const [ timesNotAvailable, setTimesNotAvailable ] = useState(null);
 
   const handleDateChange = (date) => {
+    console.log(date);
     setAppointmentDate(date);
   };
 
@@ -120,8 +120,10 @@ const Appointments = props => {
               to="/makeappointment/" 
               state={{ 
                 location: "Del Rosa Massage",  
-                timeslots: DelRosaTimes, 
-                selectedDate: appointmentDate.toDateString()
+                default_timeslots: DelRosaTimes_default, 
+                selectedDate: appointmentDate.toDateString(),
+                todaysDate: timesNotAvailable.TODAY,
+                bookedSlots: timesNotAvailable.SCHEDULE[new Intl.DateTimeFormat('fr-ca').format(appointmentDate)]
               }}
             >
               <ListItem 
@@ -133,8 +135,10 @@ const Appointments = props => {
               to="/makeappointment/" 
               state={{ 
                 location: "Aster Massage", 
-                timeslots: AsterTimes,
-                selectedDate: appointmentDate.toDateString()
+                default_timeslots: AsterTimes_default,
+                selectedDate: appointmentDate.toDateString(),
+                todaysDate: timesNotAvailable.TODAY,
+                bookedSlots: timesNotAvailable.SCHEDULE[new Intl.DateTimeFormat('fr-ca').format(appointmentDate)]
               }}
             >
               <ListItem 
@@ -142,7 +146,7 @@ const Appointments = props => {
                 className="asterMassage" 
               />
             </AniLink>
-          </List>
+        </List>
       </Box>
     </Layout>
   );
