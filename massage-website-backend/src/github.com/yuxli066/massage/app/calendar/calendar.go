@@ -211,6 +211,7 @@ func (g *GoogleCalendar) CheckAvailability() TimesAvailable {
 		s_ampm := "AM"
 		e_ampm := "AM"
 
+		// format returned time based on am/pm instead of 24 hr clock cycle
 		if s_hr >= 12 {
 			s_ampm = "PM"
 			if s_hr > 12 {
@@ -233,5 +234,6 @@ func (g *GoogleCalendar) CheckAvailability() TimesAvailable {
 		T_available.SCHEDULE[dateString] = append(T_available.SCHEDULE[dateString], ts)
 	}
 
+	log.Print(T_available, "\n\n")
 	return T_available
 }
