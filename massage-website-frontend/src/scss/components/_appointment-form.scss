@@ -2,6 +2,8 @@
 @import url('https://fonts.googleapis.com/css?family=DynaPuff&display=swap');
 $formWidth: 44em;
 $inputWidth: 38em;
+$dateSelectPadding: 2em;
+
 a {
   text-decoration: none !important; 
   flex-grow: 4;
@@ -74,7 +76,7 @@ a {
   max-height: 4em;
   border: 1.5px solid #1976d2 !important;
   background-color: unset !important;
-  padding: 3em !important;
+  padding: $dateSelectPadding !important;
   z-index: 1 !important; 
 }
 
@@ -82,7 +84,7 @@ a {
   margin: auto;
   max-width: 4em !important; 
   max-height: 4em !important;
-  padding: 3em !important;
+  padding: $dateSelectPadding !important;
   border: 1.5px solid #1976d2 !important;
   background-color: unset !important;
   z-index: 1 !important; 
@@ -107,7 +109,6 @@ a {
 /* ==================== Appointment Form Page ==================== */
 // Form - Containers
 .appointment-form {
-  padding-top: 1%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -170,7 +171,7 @@ a {
 }
 
 // Form - submit btn
-.appointment-form form a {
+.appointment-form #submit_btn {
   position: relative;
   display: inline-block;
   padding: 10px 25px;
@@ -181,10 +182,13 @@ a {
   overflow: hidden;
   transition: .5s;
   margin-top: 20px;
-  letter-spacing: 4px
+  letter-spacing: 4px;
+  border: none;
+  background-color: #1976d2;
+  border-radius: 7px;
 }
 
-.appointment-form a:hover {
+.appointment-form #submit_btn:hover {
   background: #1976d2;
   color: white;
   border-radius: 5px;

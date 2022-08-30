@@ -57,10 +57,10 @@ const pricesObject = {
 
 const AppointmentForm = props => {
   
-  const [ massageType, setMassageType ] = useState('placeholder');
+  const [ massageType, setMassageType ] = useState({massage: ''});
   const [ selectedTimeslot, setSelectedTimeslot ] = useState();
   const [ prices, setPrices ] = useState([]);
-  const [ selectedPrice, setSelectedPrice ] = useState();
+  const [ selectedMassageDuration, setSelectedMassageDuration ] = useState({txt: ''});
   const [ tStates, setTStates ] = useState(() => {
     const timeSlotButtonStates = {};
     props.timeslots.forEach((t,i) => timeSlotButtonStates[`timeSlotState_${i}`] = false );
@@ -88,7 +88,7 @@ const AppointmentForm = props => {
   };
 
   const onMassageChange = (event) => {
-    setMassageType(event.target.value)
+    setMassageType({massage: event.target.value})
     setClientInfo({
       ...clientInfo,
       'Massage Type': event.target.value
@@ -97,7 +97,7 @@ const AppointmentForm = props => {
   };
 
   const onPriceChange = (event) => {
-    setSelectedPrice(event.target.value);
+    setSelectedMassageDuration({txt: event.target.value});
   };
   
   const handleSubmit = async (clientInfo) => {
@@ -132,7 +132,7 @@ const AppointmentForm = props => {
         <Box className="massageDate">
           { props.selectedDate }
         </Box>
-        <form className="appointment-form-sub">
+        <Box className="appointment-form-sub">
             <Box
               component="form"
               sx={{
@@ -147,7 +147,11 @@ const AppointmentForm = props => {
             >
               {
                 userFields.map(fieldName => (
-                  <TextField id={`${fieldName}-id`} label={fieldName} variant="standard" />
+                  <TextField 
+                    key={`${fieldName}-key`} 
+                    id={`${fieldName}-id`} 
+                    label={fieldName} 
+                    variant="standard" />
                 ))
               }
             </Box>
@@ -173,14 +177,14 @@ const AppointmentForm = props => {
                 <Select
                   labelId="massage-type-id"
                   id="massage-type-select"
-                  value={ massageType }
+                  value={ massageType.massage || '' }
                   label="Massage Type*"
                   onChange={ onMassageChange }
                   className="select-class"
                 >
                   {
                     massageTypes.map((m, i) => (
-                      <MenuItem value={`${m.massage}`} key={`${m.massage}-${i}`}>
+                      <MenuItem value={ m.massage || "" } key={`${m.massage}-${i}`}>
                           <em> { m.massage } </em>
                       </MenuItem>
                     ))
@@ -189,13 +193,13 @@ const AppointmentForm = props => {
                 <br />
                 <br />
                 {
-                  massageType !== 'placeholder' && (
+                  massageType.massage.length > 0 && (
                     <FormControl required fullWidth>
                       <InputLabel id="massage-prices-id">Massage Prices*</InputLabel>
                       <Select
                         labelId="massage-prices-id"
                         id="massage-prices-select"
-                        value={ selectedPrice }
+                        value={ selectedMassageDuration.txt || '' }
                         label="Massage Prices*"
                         onChange={ onPriceChange }
                         className="select-class"
@@ -204,7 +208,7 @@ const AppointmentForm = props => {
                           prices.length > 0 && 
                             ( 
                               prices.map((m, i) => (
-                                <MenuItem value={`${m}`} key={`${m.txt}-${i}`}>
+                                <MenuItem value={ m.txt || "" } key={`${m.txt}-${i}`}>
                                   <em> { m.txt } </em>
                                 </MenuItem>
                               ))
@@ -217,11 +221,11 @@ const AppointmentForm = props => {
               </FormControl>
             </Box>
             <Box className="submit-button">
-              <a href="#" onClick={ async () => await handleSubmit(clientInfo) }>
+              <button id="submit_btn" onClick={ async () => await handleSubmit(clientInfo) }>
                 Submit
-              </a>
+              </button>
             </Box>
-        </form>
+        </Box>
       </Box>
     </>
   );
