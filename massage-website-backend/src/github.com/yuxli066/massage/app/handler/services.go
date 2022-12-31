@@ -53,7 +53,7 @@ func SendEmail(w http.ResponseWriter, r *http.Request) {
 }
 
 // check for appointment availability using Google's Calendar API
-func CheckAvailability(w http.ResponseWriter, r *http.Request) {
+func GetAvailability(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	var c calendarClient.GoogleCalendar = calendarClient.GoogleCalendar{
 		CTX:            ctx,
@@ -62,7 +62,7 @@ func CheckAvailability(w http.ResponseWriter, r *http.Request) {
 		SCOPE:          calendar.CalendarScope,
 	}
 	c.Authenticate()
-	timesBusy := c.CheckAvailability()
+	timesBusy := c.GetAvailability()
 	respondJSON(w, http.StatusOK, timesBusy)
 }
 

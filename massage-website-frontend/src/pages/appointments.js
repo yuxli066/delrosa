@@ -5,80 +5,26 @@ import { enGB } from 'date-fns/locale';
 import SiteSEO from '../components/SiteSEO';
 import Layout from '../components/Layout';
 import LocationMapPicker from '../components/GoogleMapLocationPicker';
-import { checkAvailability } from "../services/appointmentService";
+import { getAvailability } from "../services/appointmentService";
 import AniLink from "gatsby-plugin-transition-link/AniLink";
 import '../scss/components/_appointment-form.scss';
 import '../scss/style.scss';
 import 'react-nice-dates/build/style.css';
 
-const DelRosaTimes_default = [
-  "9:30 AM", 
-  "10:00 AM", 
-  "10:30 AM", 
-  "11:00 AM", 
-  "11:30 AM", 
-  "12:00 PM", 
-  "12:30 PM", 
-  "1:00 PM",
-  "1:30 PM",
-  "2:00 PM",
-  "2:30 PM",
-  "3:00 PM",
-  "3:30 PM",
-  "4:00 PM",
-  "4:30 PM",
-  "5:00 PM",
-  "5:30 PM", 
-  "6:00 PM", 
-  "6:30 PM",
-  "7:00 PM", 
-  "7:30 PM", 
-  "8:00 PM", 
-  "8:30 PM",
-  "9:00 PM", 
-  "9:30 PM"
-]; 
-
-const AsterTimes_default = [
-  "9:30 AM", 
-  "10:00 AM", 
-  "10:30 AM", 
-  "11:00 AM", 
-  "11:30 AM", 
-  "12:00 PM", 
-  "12:30 PM", 
-  "1:00 PM",
-  "1:30 PM",
-  "2:00 PM",
-  "2:30 PM",
-  "3:00 PM",
-  "3:30 PM",
-  "4:00 PM",
-  "4:30 PM",
-  "5:00 PM",
-  "5:30 PM", 
-  "6:00 PM", 
-  "6:30 PM",
-  "7:00 PM", 
-  "7:30 PM", 
-  "8:00 PM", 
-  "8:30 PM",
-  "9:00 PM"
-];
-
 const Appointments = props => {
 
-  const [ appointmentDate, setAppointmentDate ] = useState(new Date());
-  const [ timesNotAvailable, setTimesNotAvailable ] = useState(null);
+  const [ appointment_date, set_appointment_date ] = useState(new Date());
+  const [ appointment_date_string, set_appointment_date_string ] = useState(null);
+  const [ times_not_available, set_times_not_available ] = useState(null);
 
   const handleDateChange = (date) => {
-    console.log(date);
-    setAppointmentDate(date);
+    set_appointment_date(date);
+    set_appointment_date_string(new Date(date).toISOString().split('T')[0]);
   };
 
   const modifiers = {
-    disabled: (date) => new Date(date) < new Date(timesNotAvailable.TODAY),
-    highlight: (date) => new Date(date) < new Date(timesNotAvailable.TODAY)
+    disabled: (date) => new Date(date).setHours(22) < new Date(times_not_available.TODAY),
+    highlight: (date) => new Date(date).setHours(22) < new Date(times_not_available.TODAY)
   }
 
   const modifiersClassNames = {
@@ -86,20 +32,26 @@ const Appointments = props => {
   }
 
   useEffect(() => {
-    checkAvailability()
-      .then((timesAvailable) => {
-        setTimesNotAvailable(timesAvailable);
+    const appt_date = appointment_date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }).split(',')[0];
+    const appt_date_els = appt_date.split('/'); 
+    set_appointment_date_string(`${appt_date_els[2]}-${appt_date_els[0]}-${appt_date_els[1]}`);
+  }, [appointment_date])
+
+  useEffect(() => {
+    getAvailability()
+      .then((times) => {
+        set_times_not_available(times);
       });
   }, []);
 
-  return timesNotAvailable !== null && (
+  return ( times_not_available && appointment_date_string) &&  (
     <Layout bodyClass="page-teams">
       <SiteSEO title="Appointments" />
       <Box className="pContainer">
         <LocationMapPicker />
         <Box className="calendarContainer">
           <DatePickerCalendar
-            date={appointmentDate} 
+            date={appointment_date} 
             onDateChange={handleDateChange} 
             locale={enGB}
             className="calendar"
@@ -119,11 +71,10 @@ const Appointments = props => {
             <AniLink 
               to="/makeappointment/" 
               state={{ 
-                location: "Del Rosa Massage",  
-                default_timeslots: DelRosaTimes_default, 
-                selectedDate: appointmentDate.toDateString(),
-                todaysDate: timesNotAvailable.TODAY,
-                bookedSlots: timesNotAvailable.SCHEDULE[new Intl.DateTimeFormat('fr-ca').format(appointmentDate)]
+                name: "Del Rosa Massage",  
+                selected_date: appointment_date.toISOString(),
+                todays_date: times_not_available.TODAY,
+                slots_not_available: times_not_available.SCHEDULE[appointment_date_string]
               }}
             >
               <ListItem 
@@ -134,11 +85,10 @@ const Appointments = props => {
             <AniLink 
               to="/makeappointment/" 
               state={{ 
-                location: "Aster Massage", 
-                default_timeslots: AsterTimes_default,
-                selectedDate: appointmentDate.toDateString(),
-                todaysDate: timesNotAvailable.TODAY,
-                bookedSlots: timesNotAvailable.SCHEDULE[new Intl.DateTimeFormat('fr-ca').format(appointmentDate)]
+                name: "Aster Massage",
+                selected_date: appointment_date.toISOString(),
+                todays_date: times_not_available.TODAY,
+                slots_not_available: times_not_available.SCHEDULE[appointment_date_string]
               }}
             >
               <ListItem 

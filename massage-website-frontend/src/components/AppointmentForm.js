@@ -6,6 +6,9 @@ import '../scss/components/_appointment-form.scss';
 const userFields = ['Full Name', 'Email', 'Phone Number'];
 const massageTypes = [ 
   {
+    massage: null
+  },
+  {
     massage: "Body/Foot Massage", 
   }, 
   { 
@@ -57,7 +60,7 @@ const pricesObject = {
 
 const AppointmentForm = props => {
   
-  const [ massageType, setMassageType ] = useState('placeholder');
+  const [ massageType, setMassageType ] = useState(null);
   const [ selectedTimeslot, setSelectedTimeslot ] = useState();
   const [ prices, setPrices ] = useState([]);
   const [ selectedPrice, setSelectedPrice ] = useState();
@@ -101,7 +104,6 @@ const AppointmentForm = props => {
   };
   
   const handleSubmit = async (clientInfo) => {
-    console.log(clientInfo)
     await sendEmail({
       "subject": `Appointment for ${clientInfo["Full Name"]}`,
       "message": {
@@ -130,7 +132,7 @@ const AppointmentForm = props => {
           <h2 className="appointments-heading">{ props.massageParlorName }</h2>
         </Box>
         <Box className="massageDate">
-          { props.selectedDate }
+          { new Date(props.selectedDate).toDateString() }
         </Box>
         <form className="appointment-form-sub">
             <Box
@@ -147,7 +149,7 @@ const AppointmentForm = props => {
             >
               {
                 userFields.map(fieldName => (
-                  <TextField id={`${fieldName}-id`} label={fieldName} variant="standard" />
+                  <TextField key={`${fieldName}-id`} id={`${fieldName}-id`} label={fieldName} variant="standard" />
                 ))
               }
             </Box>
@@ -180,16 +182,17 @@ const AppointmentForm = props => {
                 >
                   {
                     massageTypes.map((m, i) => (
+                      m.massage && (
                       <MenuItem value={`${m.massage}`} key={`${m.massage}-${i}`}>
                           <em> { m.massage } </em>
-                      </MenuItem>
+                      </MenuItem> )
                     ))
                   }
                 </Select>
                 <br />
                 <br />
                 {
-                  massageType !== 'placeholder' && (
+                  massageType && (
                     <FormControl required fullWidth>
                       <InputLabel id="massage-prices-id">Massage Prices*</InputLabel>
                       <Select
@@ -201,7 +204,7 @@ const AppointmentForm = props => {
                         className="select-class"
                       >
                         {
-                          prices.length > 0 && 
+                          prices && 
                             ( 
                               prices.map((m, i) => (
                                 <MenuItem value={`${m}`} key={`${m.txt}-${i}`}>
