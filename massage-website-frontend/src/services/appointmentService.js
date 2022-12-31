@@ -22,8 +22,8 @@ export const createAppointment = (apptTimes) => httpCommon
         console.error(err)
     );
 
-export const checkAvailability = () => httpCommon
-    .get("checkAvailability")
+export const getAvailability = () => httpCommon
+    .get("getAvailability")
     .then((res) => {
         if (res.status === 200) {
             return res.data;

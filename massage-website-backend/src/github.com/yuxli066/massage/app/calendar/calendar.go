@@ -42,39 +42,7 @@ type GoogleCalendarService interface {
 	GetService()
 	Authenticate()
 	GetAppointments()
-	CheckAvailability()
-	GetNumericalMonth()
-}
-
-func (g *GoogleCalendar) GetNumericalMonth(month string) string {
-	switch month {
-	case "January":
-		return "01"
-	case "February":
-		return "02"
-	case "March":
-		return "03"
-	case "April":
-		return "04"
-	case "May":
-		return "05"
-	case "June":
-		return "06"
-	case "July":
-		return "07"
-	case "August":
-		return "08"
-	case "September":
-		return "09"
-	case "October":
-		return "10"
-	case "November":
-		return "11"
-	case "December":
-		return "12"
-	default:
-		return ""
-	}
+	GetAvailability()
 }
 
 func (g *GoogleCalendar) GetConfig() *jwt.Config {
@@ -171,9 +139,9 @@ func (g *GoogleCalendar) SetAppointment(timeIn string, timeOut string) {
 	log.Println("-------------------------------------------------------------------------------------------------------------")
 }
 
-func (g *GoogleCalendar) CheckAvailability() TimesAvailable {
+func (g *GoogleCalendar) GetAvailability() TimesAvailable {
 	Tstart := time.Now()
-	T_today := Tstart.Local().Format("2006-01-02")
+	T_today := Tstart.Local().Format(time.RFC3339)
 	log.Println("Todays's Date:", T_today)
 	Tend := Tstart.Add(time.Hour * 24 * 35) // get availability for the next 35 days
 	freeBusyRequestQuery := calendar.FreeBusyRequest{
@@ -200,38 +168,22 @@ func (g *GoogleCalendar) CheckAvailability() TimesAvailable {
 		if err != nil {
 			log.Fatalf("Error parsing time: %v", err)
 		}
-		yr, month, date := current_date.Date()
-		dateString := fmt.Sprint(yr) + "-" + g.GetNumericalMonth(month.String()) + "-" + fmt.Sprint(date)
+		current_date_string := current_date.Format(time.RFC3339)
+		current_date_string = strings.Split(current_date_string, "T")[0]
 
 		// format returned busy times
-		s_time, _ := time.Parse(time.RFC3339, times.Start)
-		e_time, _ := time.Parse(time.RFC3339, times.End)
-		s_hr, s_min, _ := s_time.Clock()
-		e_hr, e_min, _ := e_time.Clock()
-		s_ampm := "AM"
-		e_ampm := "AM"
-
-		// format returned time based on am/pm instead of 24 hr clock cycle
-		if s_hr >= 12 {
-			s_ampm = "PM"
-			if s_hr > 12 {
-				s_hr = s_hr - 12
-			}
-		}
-
-		if e_hr >= 12 {
-			e_ampm = "PM"
-			if e_hr > 12 {
-				e_hr = e_hr - 12
-			}
-		}
+		start_time, _ := time.Parse(time.RFC3339, times.Start)
+		end_time, _ := time.Parse(time.RFC3339, times.End)
+		
+		start_time_string := start_time.Format(time.RFC3339)
+		end_time_string := end_time.Format(time.RFC3339)
 
 		// append busy times to the available schedules
 		ts := TimeSlot{
-			STARTTIME: fmt.Sprint(s_hr) + ":" + fmt.Sprintf("%02d", s_min) + " " + s_ampm,
-			ENDTIME:   fmt.Sprint(e_hr) + ":" + fmt.Sprintf("%02d", e_min) + " " + e_ampm,
+			STARTTIME: start_time_string,
+			ENDTIME: end_time_string,
 		}
-		T_available.SCHEDULE[dateString] = append(T_available.SCHEDULE[dateString], ts)
+		T_available.SCHEDULE[current_date_string] = append(T_available.SCHEDULE[current_date_string], ts)
 	}
 
 	log.Print(T_available, "\n\n")
