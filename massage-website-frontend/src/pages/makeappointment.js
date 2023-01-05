@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import SiteSEO from '../components/SiteSEO';
 import Layout from '../components/Layout';
-import { graphql } from 'gatsby';
 import AppointmentForm from '../components/AppointmentForm';
 import { Box } from '@mui/material';
 import '../scss/components/_appointment-form.scss';
+import { graphql } from 'gatsby';
 
 const round_nearest_30 = (date) => {
   const minutes = 30;
@@ -31,6 +31,7 @@ const get_massage_times = (name, date) => {
 }
 
 const get_available_slots = (todays_date, selected_date, parolor_name, booked_slots) => {
+  console.log('booked slots', booked_slots);
   const available_slots = [];
   const intlFormatOptions = { hour: "numeric", minute: "numeric", hourCycle: "h12" };
   const todays_date_string = new Date(todays_date).toLocaleDateString();
@@ -45,21 +46,24 @@ const get_available_slots = (todays_date, selected_date, parolor_name, booked_sl
   
   let time_runner = start_time < current_time ? round_nearest_30(current_time) : round_nearest_30(start_time);
   let slot_index = 0;
-  console.log('booked slots', booked_slots);
-  if (booked_slots) {
+
+  if (booked_slots && booked_slots.length > 0) {
     while (slot_index < booked_slots.length) {
       const current_start_time = new Date(booked_slots[slot_index].STARTTIME);
       const current_end_time = new Date(booked_slots[slot_index].ENDTIME);
-
-      const time_runner_plus_30 = new Date(time_runner).setMinutes(time_runner.getMinutes() + 30);
-      if (time_runner_plus_30 < current_start_time) {
-        available_slots.push(new Intl.DateTimeFormat('en-GB', intlFormatOptions).format(time_runner).toUpperCase());
-        time_runner.setMinutes(time_runner.getMinutes() + 30);
-      } else if (time_runner > current_start_time && time_runner < current_end_time) {
+      
+      if (current_end_time < round_nearest_30(start_time)) {
         ++slot_index;
-        time_runner = new Date(current_end_time);
-      } 
-      console.log(time_runner);
+      } else {
+        if (time_runner < current_start_time) {
+          available_slots.push(new Intl.DateTimeFormat('en-GB', intlFormatOptions).format(time_runner).toUpperCase());
+          time_runner.setMinutes(time_runner.getMinutes() + 30);
+        } else if (time_runner >= current_start_time && time_runner < current_end_time) {
+          ++slot_index;
+          time_runner = new Date(current_end_time);
+        }
+        console.log(time_runner, available_slots);
+      }
     }
   }
    

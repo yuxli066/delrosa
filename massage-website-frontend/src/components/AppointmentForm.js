@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { MenuItem, Select, FormControl, InputLabel, Button, TextField, Box } from '@mui/material';
 import { sendEmail, createAppointment } from "../services/appointmentService";
+import { graphql } from 'gatsby';
+
 import '../scss/components/_appointment-form.scss';
 
 const userFields = ['Full Name', 'Email', 'Phone Number'];
@@ -153,7 +155,7 @@ const AppointmentForm = props => {
                 ))
               }
             </Box>
-            <Box className="timeslot-container">
+            { props.timeslots.length > 0 ? ( <Box className="timeslot-container">
               {
                 props.timeslots.map((time,i) => (
                   <Box className="timeslot" key={`timeSlotState_${i}`}>
@@ -168,7 +170,11 @@ const AppointmentForm = props => {
                   </Box>
                 ))
               }
-            </Box>
+            </Box> ) : 
+            ( <Box> 
+                <p> No Available Timeslots at this current location ! </p>
+              </Box> )
+            }
             <Box >
               <FormControl required className="selection-container" fullWidth sx={{ marginTop: "2em" }}>
                 <InputLabel id="massage-type-id">Massage Type*</InputLabel>

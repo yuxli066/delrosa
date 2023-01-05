@@ -14,12 +14,17 @@ import 'react-nice-dates/build/style.css';
 const Appointments = props => {
 
   const [ appointment_date, set_appointment_date ] = useState(new Date());
-  const [ appointment_date_string, set_appointment_date_string ] = useState(null);
   const [ times_not_available, set_times_not_available ] = useState(null);
+  const [ booked_times, set_booked_times ] = useState(null);
 
   const handleDateChange = (date) => {
+    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+    const apt_date_string = new Date(new Date(date).getTime() - tzoffset).toISOString().split('T')[0];
+    const booked_times = times_not_available.SCHEDULE[apt_date_string];
+    console.log('Appointment Date String:', apt_date_string);
+    console.log('Booked Times', booked_times)
     set_appointment_date(date);
-    set_appointment_date_string(new Date(date).toISOString().split('T')[0]);
+    set_booked_times(booked_times);
   };
 
   const modifiers = {
@@ -32,19 +37,21 @@ const Appointments = props => {
   }
 
   useEffect(() => {
-    const appt_date = appointment_date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }).split(',')[0];
-    const appt_date_els = appt_date.split('/'); 
-    set_appointment_date_string(`${appt_date_els[2]}-${appt_date_els[0]}-${appt_date_els[1]}`);
-  }, [appointment_date])
-
-  useEffect(() => {
     getAvailability()
       .then((times) => {
         set_times_not_available(times);
       });
   }, []);
 
-  return ( times_not_available && appointment_date_string) &&  (
+  useEffect(() => {
+    const appt_date = appointment_date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }).split(',')[0];
+    const appt_date_els = appt_date.split('/'); 
+    const appt_date_string = `${appt_date_els[2]}-${appt_date_els[0]}-${appt_date_els[1]}`;
+    const booked_times = times_not_available && times_not_available.SCHEDULE[appt_date_string] ? times_not_available.SCHEDULE[appt_date_string] : [];
+    set_booked_times(booked_times);
+  }, []);
+
+  return ( times_not_available && booked_times !== null ) &&  (
     <Layout bodyClass="page-teams">
       <SiteSEO title="Appointments" />
       <Box className="pContainer">
@@ -74,7 +81,7 @@ const Appointments = props => {
                 name: "Del Rosa Massage",  
                 selected_date: appointment_date.toISOString(),
                 todays_date: times_not_available.TODAY,
-                slots_not_available: times_not_available.SCHEDULE[appointment_date_string]
+                slots_not_available: booked_times
               }}
             >
               <ListItem 
@@ -88,7 +95,7 @@ const Appointments = props => {
                 name: "Aster Massage",
                 selected_date: appointment_date.toISOString(),
                 todays_date: times_not_available.TODAY,
-                slots_not_available: times_not_available.SCHEDULE[appointment_date_string]
+                slots_not_available: booked_times
               }}
             >
               <ListItem 
