@@ -52,7 +52,7 @@ func (e Email) ConstructEmailMsg() []byte {
 		"Appointment Time: " + e.EMAILBODY.MESSAGE.TIME + "\r\n" +
 		"Massage Type: " + e.EMAILBODY.MESSAGE.TYPE + "\r\n" +
 		"Price: $" + strconv.Itoa(e.EMAILBODY.MESSAGE.PRICE) + "\r\n\r\n" +
-		"Please add this to the calendar." +
+		"Please note that this has been added to the calendar." +
 		"\r\n")
 }
 
