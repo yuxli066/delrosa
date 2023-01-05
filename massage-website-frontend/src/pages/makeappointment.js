@@ -62,12 +62,10 @@ const get_available_slots = (todays_date, selected_date, parolor_name, booked_sl
           ++slot_index;
           time_runner = new Date(current_end_time);
         }
-        console.log(time_runner, available_slots);
       }
     }
   }
-   
-  console.log(time_runner);
+
   while (time_runner < end_time) {
     available_slots.push(new Intl.DateTimeFormat('en-GB', intlFormatOptions).format(time_runner).toUpperCase());
     time_runner.setMinutes(time_runner.getMinutes() + 30);
