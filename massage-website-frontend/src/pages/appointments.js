@@ -20,9 +20,9 @@ const Appointments = props => {
   const handleDateChange = (date) => {
     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
     const apt_date_string = new Date(new Date(date).getTime() - tzoffset).toISOString().split('T')[0];
-    const booked_times = times_not_available.SCHEDULE[apt_date_string];
+    const booked_times = times_not_available.SCHEDULE[apt_date_string] ? times_not_available.SCHEDULE[apt_date_string] : [];
     console.log('Appointment Date String:', apt_date_string);
-    console.log('Booked Times', booked_times)
+    console.log('Booked Times', booked_times);
     set_appointment_date(date);
     set_booked_times(booked_times);
   };
@@ -40,15 +40,20 @@ const Appointments = props => {
     getAvailability()
       .then((times) => {
         set_times_not_available(times);
+        const appt_date = appointment_date.toLocaleString('en-US', { 
+          timeZone: 'America/Los_Angeles',
+          day: "2-digit", 
+          month: "2-digit", 
+          year: "numeric",
+          hourCycle: "h12"
+        }).split(',')[0];
+        const appt_date_els = appt_date.split('/'); 
+        const appt_date_string = `${appt_date_els[2]}-${appt_date_els[0]}-${appt_date_els[1]}`;
+        console.log(appt_date_string)
+        const booked_times = times.SCHEDULE[appt_date_string] ? times.SCHEDULE[appt_date_string] : [];
+        set_booked_times(booked_times);
+        console.log(booked_times)
       });
-  }, []);
-
-  useEffect(() => {
-    const appt_date = appointment_date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }).split(',')[0];
-    const appt_date_els = appt_date.split('/'); 
-    const appt_date_string = `${appt_date_els[2]}-${appt_date_els[0]}-${appt_date_els[1]}`;
-    const booked_times = times_not_available && times_not_available.SCHEDULE[appt_date_string] ? times_not_available.SCHEDULE[appt_date_string] : [];
-    set_booked_times(booked_times);
   }, []);
 
   return ( times_not_available && booked_times !== null ) &&  (
