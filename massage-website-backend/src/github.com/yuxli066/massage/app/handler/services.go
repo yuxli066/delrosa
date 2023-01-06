@@ -25,10 +25,10 @@ func GetHealthCheck(w http.ResponseWriter, r *http.Request) {
 func SendEmail(w http.ResponseWriter, r *http.Request) {
 	var emailClient email.Email = email.Email{
 		CERTPATH:   "src/github.com/yuxli066/massage/certs/tlsCert.crt",
-		SERVERNAME: "smtp-relay.gmail.com",
+		SERVERNAME: "smtp.gmail.com",
 		SERVERPORT: 587,
 		FROMEMAIL:  "paulli@delrosamassage.com",
-		TOEMAIL:    "yuxli066@gmail.com",
+		TOEMAIL:    "yuxuan.leo.li@gmail.com",
 	}
 
 	var err error

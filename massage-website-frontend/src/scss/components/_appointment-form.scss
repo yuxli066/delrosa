@@ -114,12 +114,14 @@ a {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 768px;
 }
 
 .appointment-form-sub {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding: 0 2em 0 2em;
 }
 
@@ -135,10 +137,20 @@ a {
 
 // Form - selection dropdowns
 .selection-container {
+  margin-top: 0 !important;
   min-width: $formWidth;
   flex-direction: row !important;
   justify-content: center;
   gap: 1em;
+}
+
+.no-availability-container {
+  font-weight: 900 !important;
+  font-size: larger;
+  color: red;
+  padding-top: 0.5em;
+  padding-bottom: 1em;
+  text-transform: uppercase;
 }
 
 .select-class {
@@ -198,12 +210,65 @@ a {
   0 0 50px #1976d2;
 }
 
+// <!-- HTML !-->
+// <button class="button-48" role="button"><span class="text">Button 48</span></button>
+
+/* CSS */
 .submit-button {
-  margin-top: 1em;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-around;
+  border-radius: 2em;
+  border: 1px solid #1976d2;
+  margin-top: 1.5em;
+  appearance: none;
+  box-sizing: border-box;
+  color: #000000;
+  cursor: pointer;
+  display: inline-block;
+  padding: 1em 2em;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  text-rendering: geometricprecision;
+  text-transform: uppercase;
+  transition: opacity 300ms cubic-bezier(.694, 0, 0.335, 1),background-color 100ms cubic-bezier(.694, 0, 0.335, 1),color 100ms cubic-bezier(.694, 0, 0.335, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  white-space: nowrap;
+  a {
+    font-weight: 700;
+    color: #1976d2;
+  }
+}
+
+.submit-button:hover {
+  a {
+    font-weight: 700;
+    color: #FFFFFF;
+  }
+}
+
+.submit-button:before {
+  border-radius: 2em;
+  animation: opacityFallbackOut .5s step-end forwards;
+  backface-visibility: hidden;
+  background-color: #1976d2;
+  clip-path: polygon(-1% 0, 0 0, -25% 100%, -1% 100%);
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: translateZ(0);
+  transition: clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1), -webkit-clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1);
+  width: 100%;
+  z-index: -1;
+}
+
+.submit-button:hover:before {
+  z-index: -1;
+  animation: opacityFallbackIn 0s step-start forwards;
+  clip-path: polygon(0 0, 101% 0, 101% 101%, 0 101%);
 }
 
 // Form - timeslots

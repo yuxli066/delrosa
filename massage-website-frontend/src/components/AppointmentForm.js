@@ -134,7 +134,7 @@ const AppointmentForm = props => {
           <h2 className="appointments-heading">{ props.massageParlorName }</h2>
         </Box>
         <Box className="massageDate">
-          { props.selectedDate }
+          { new Date(props.selectedDate).toDateString() }
         </Box>
         <form className="appointment-form-sub">
             <Box
@@ -171,8 +171,8 @@ const AppointmentForm = props => {
                 ))
               }
             </Box> ) : 
-            ( <Box> 
-                <p> No Available Timeslots at this current location ! </p>
+            ( <Box className="no-availability-container"> 
+                <h5> No Available Timeslots at this location! </h5>
               </Box> )
             }
             <Box >

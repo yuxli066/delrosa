@@ -38,6 +38,7 @@ type EmailSender interface {
 	GetHostname()
 	GetServerUrl()
 	SendHELO()
+	Authenticate()
 	AddCerts()
 	SendMail()
 	Execute()
@@ -70,6 +71,15 @@ func (e Email) GetServerUrl() string {
 	return e.SERVERNAME + ":" + strconv.Itoa(e.SERVERPORT)
 }
 
+func (e Email) Authenticate() {
+	log.Println("Authenticating Email User...")
+	err := e.SERVER.Auth(smtp.PlainAuth("", "paulli@delrosamassage.com", "hknmbfixxvzkwveo", "smtp.gmail.com"))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
 func (e Email) AddCerts() {
 	log.Println("Adding certificates to our server...")
 	certs := x509.NewCertPool()
@@ -84,6 +94,11 @@ func (e Email) AddCerts() {
 	if err = e.SERVER.StartTLS(config); err != nil {
 		log.Println("TLS ERROR:", err.Error())
 	}
+	state, _ := e.SERVER.TLSConnectionState()
+
+	fmt.Printf("Handshake Complete : %v\n", strconv.FormatBool(state.HandshakeComplete))
+	fmt.Printf("DidResume: %v\n", strconv.FormatBool(state.DidResume))
+
 }
 
 func (e Email) SendHELO() {
@@ -117,10 +132,12 @@ func (e Email) SendMail() {
 	if err != nil {
 		log.Println("DATA CLOSE ERROR:", err.Error())
 	}
+	e.SERVER.Quit()
 }
 
 func (e Email) Execute() {
 	e.SendHELO()
 	e.AddCerts()
+	e.Authenticate()
 	e.SendMail()
 }
