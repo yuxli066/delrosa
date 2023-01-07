@@ -36,6 +36,9 @@ const get_available_slots = (todays_date, selected_date, parolor_name, booked_sl
   const intlFormatOptions = { hour: "numeric", minute: "numeric", hourCycle: "h12" };
   const todays_date_string = new Date(todays_date).toLocaleDateString();
   const selected_date_string = new Date(selected_date).toLocaleDateString();
+  
+  const increments = 30; /** Can use either 30 or 15 min intervals, 
+                             does not matter as long as correct times are booked */
 
   let current_time = todays_date_string === selected_date_string ? new Date(todays_date) : new Date(`${selected_date_string} 9:00 AM PST`),
       massage_parlor_times = todays_date_string === selected_date_string ? 
@@ -57,7 +60,7 @@ const get_available_slots = (todays_date, selected_date, parolor_name, booked_sl
       } else {
         if (time_runner < current_start_time) {
           available_slots.push(new Intl.DateTimeFormat('en-GB', intlFormatOptions).format(time_runner).toUpperCase());
-          time_runner.setMinutes(time_runner.getMinutes() + 30);
+          time_runner.setMinutes(time_runner.getMinutes() + increments);
         } else if (time_runner >= current_start_time && time_runner < current_end_time) {
           ++slot_index;
           time_runner = new Date(current_end_time);
@@ -98,7 +101,7 @@ const MakeAppointment = ({ location, data }) => {
     }
   }, [location_state])
 
-  return timeslots !== null && (
+  return (timeslots && location_state) && (
     <Layout bodyClass="page-teams">
       <SiteSEO title="AppointmentForm" />
       <Box className="AppointmentFormContainer">

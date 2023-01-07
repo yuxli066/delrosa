@@ -60,9 +60,29 @@ const pricesObject = {
   ]
 };
 
+
+/* Shamelessly stolen from the following page:  
+ * https://www.30secondsofcode.org/js/s/to-iso-string-with-timezone 
+**/
+
+const toISOStringWithTimezone = date => {
+  const tzOffset = -date.getTimezoneOffset();
+  const diff = tzOffset >= 0 ? '+' : '-';
+  const pad = n => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
+  return date.getFullYear() +
+    '-' + pad(date.getMonth() + 1) +
+    '-' + pad(date.getDate()) +
+    'T' + pad(date.getHours()) +
+    ':' + pad(date.getMinutes()) +
+    ':' + pad(date.getSeconds()) +
+    diff + pad(tzOffset / 60) +
+    ':' + pad(tzOffset % 60);
+};
+
 const AppointmentForm = props => {
   
   const [ massageType, setMassageType ] = useState(null);
+  const [ num_minutes, set_num_minutes ] = useState(null);
   const [ selectedTimeslot, setSelectedTimeslot ] = useState();
   const [ prices, setPrices ] = useState([]);
   const [ selectedPrice, setSelectedPrice ] = useState();
@@ -106,23 +126,33 @@ const AppointmentForm = props => {
   };
   
   const handleSubmit = async (clientInfo) => {
-    await sendEmail({
-      "subject": `Appointment for ${clientInfo["Full Name"]}`,
-      "message": {
-        "name": `${clientInfo["Full Name"]}`,
-        "date": clientInfo["Appointment Date"],
-        "time": clientInfo["Appointment Date"],
-        "type": massageType,
-        "price": 20
-      } 
-    });
+    const current_date = props.selectedDate.split('T')[0];
+    const in_time = toISOStringWithTimezone(new Date(`${current_date} ${selectedTimeslot}`));
+    const out_time = new Date(in_time).setMinutes(in_time.getMinutes() + 30);
+    console.log(`${current_date} ${selectedTimeslot}`);
+    console.log("Selected Time Slot", in_time);
+
+    // await sendEmail({
+    //   "subject": `Appointment for ${clientInfo["Full Name"]}`,
+    //   "message": {
+    //     "name": `${clientInfo["Full Name"]}`,
+    //     "date": clientInfo["Appointment Date"],
+    //     "time": clientInfo["Appointment Date"],
+    //     "type": massageType,
+    //     "price": 20
+    //   } 
+    // });
 
     await createAppointment({
-      'Full Name': clientInfo["Full Name"],
-      'Email': clientInfo["Email"],
-      'Phone Number': clientInfo["Phone Number"],
-      'Appointment Date': "2022-07-10T19:00:00-07:00",
-      'Massage Type': massageType
+      "INTIME": "2023-01-07T18:00:00-07:00",
+      "OUTTIME": "2023-01-07T19:00:00-07:00",
+      "DETAILS": {
+          "FULL_NAME": clientInfo["Full Name"],
+          "LOCATION": "Testing Location", 
+          "EMAIL": clientInfo["Email"], 
+          "PHONE_NUMBER": clientInfo["Phone Number"],
+          "MASSAGE_TYPE": massageType
+      }
     });
 
   };
@@ -225,8 +255,8 @@ const AppointmentForm = props => {
                 }
               </FormControl>
             </Box>
-            <Box className="submit-button">
-              <a href="#" onClick={ async () => await handleSubmit(clientInfo) }>
+            <Box className="submit-button" onClick={ async () => await handleSubmit(clientInfo) } >
+              <a href="#">
                 Submit
               </a>
             </Box>

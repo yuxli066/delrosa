@@ -11,8 +11,8 @@ export const sendEmail = (email) => httpCommon
         console.error(err)
     );
 
-export const createAppointment = (apptTimes) => httpCommon
-    .post("createAppointment", apptTimes)
+export const createAppointment = (appointment_info) => httpCommon
+    .post("createAppointment", appointment_info)
     .then((res) => {
         if (res.status === 200) {
             return res.data;

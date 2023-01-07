@@ -67,9 +67,11 @@ func GetAvailability(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetNewAppointment(w http.ResponseWriter, r *http.Request) {
+
 	type appointmentTimes struct {
 		INTIME  string
 		OUTTIME string
+		DETAILS *calendarClient.AppointmentDetails
 	}
 
 	t, err := ioutil.ReadAll(r.Body)
@@ -91,6 +93,6 @@ func SetNewAppointment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c.Authenticate()
-	c.SetAppointment(at.INTIME, at.OUTTIME)
+	c.SetAppointment(at.INTIME, at.OUTTIME, at.DETAILS)
 	respondJSON(w, http.StatusOK, map[string]bool{"Appointment Set": true})
 }

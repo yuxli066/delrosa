@@ -36,6 +36,14 @@ type TimesAvailable struct {
 	SCHEDULE map[string][]TimeSlot
 }
 
+type AppointmentDetails struct {
+	FULL_NAME    string
+	LOCATION     string
+	EMAIL        string
+	PHONE_NUMBER string
+	MASSAGE_TYPE string
+}
+
 type GoogleCalendarService interface {
 	GetConfig()
 	GetClient()
@@ -112,11 +120,13 @@ func (g *GoogleCalendar) GetAppointments() {
 	}
 }
 
-func (g *GoogleCalendar) SetAppointment(timeIn string, timeOut string) {
+func (g *GoogleCalendar) SetAppointment(timeIn string, timeOut string, appt_details *AppointmentDetails) {
 	var newAppointment calendar.Event = calendar.Event{
-		Summary:     "Event from API",
-		Location:    "Massage 1",
-		Description: "Short Description of the massage type",
+		Summary:  "Appointment for " + appt_details.FULL_NAME,
+		Location: appt_details.LOCATION,
+		Description: "EMAIL: " + appt_details.EMAIL +
+			" \nPHONE NUMBER: " + appt_details.PHONE_NUMBER +
+			" \nMASSAGE TYPE: " + appt_details.MASSAGE_TYPE,
 		Start: &calendar.EventDateTime{
 			DateTime: timeIn,
 			TimeZone: "America/Los_Angeles",
@@ -174,14 +184,14 @@ func (g *GoogleCalendar) GetAvailability() TimesAvailable {
 		// format returned busy times
 		start_time, _ := time.Parse(time.RFC3339, times.Start)
 		end_time, _ := time.Parse(time.RFC3339, times.End)
-		
+
 		start_time_string := start_time.Format(time.RFC3339)
 		end_time_string := end_time.Format(time.RFC3339)
 
 		// append busy times to the available schedules
 		ts := TimeSlot{
 			STARTTIME: start_time_string,
-			ENDTIME: end_time_string,
+			ENDTIME:   end_time_string,
 		}
 		T_available.SCHEDULE[current_date_string] = append(T_available.SCHEDULE[current_date_string], ts)
 	}
