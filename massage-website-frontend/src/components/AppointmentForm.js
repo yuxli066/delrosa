@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { MenuItem, Select, FormControl, InputLabel, Button, TextField, Box } from '@mui/material';
 import { sendEmail, createAppointment } from "../services/appointmentService";
-import { graphql } from 'gatsby';
+// import { graphql } from 'gatsby';
 
 import '../scss/components/_appointment-form.scss';
 
-const userFields = ['Full Name', 'Email', 'Phone Number'];
-const massageTypes = [ 
+const user_fields = ['Full Name', 'Email', 'Phone Number'];
+const massage_types = [ 
   {
     massage: null
   },
@@ -18,7 +18,7 @@ const massageTypes = [
   }, 
 ];
 
-const pricesObject = {
+const massage_prices = {
   "Body Oil Massage": [ 
     {
       txt:  " 120 minutes - $90 ", 
@@ -69,89 +69,125 @@ const toISOStringWithTimezone = date => {
   const tzOffset = -date.getTimezoneOffset();
   const diff = tzOffset >= 0 ? '+' : '-';
   const pad = n => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
-  return date.getFullYear() +
+  return new Date(date.getFullYear() +
     '-' + pad(date.getMonth() + 1) +
     '-' + pad(date.getDate()) +
     'T' + pad(date.getHours()) +
     ':' + pad(date.getMinutes()) +
     ':' + pad(date.getSeconds()) +
     diff + pad(tzOffset / 60) +
-    ':' + pad(tzOffset % 60);
+    ':' + pad(tzOffset % 60));
 };
 
 const AppointmentForm = props => {
-  
-  const [ massageType, setMassageType ] = useState(null);
-  const [ num_minutes, set_num_minutes ] = useState(null);
-  const [ selectedTimeslot, setSelectedTimeslot ] = useState();
-  const [ prices, setPrices ] = useState([]);
-  const [ selectedPrice, setSelectedPrice ] = useState();
+  const massage_type_form = useRef(null);
+
+  /** Massage Details & Client Info states */
+  const [ massage_details, set_massage_details ] = useState({
+    'Massage Type': '',
+    'Appointment Length': '',
+    'Price': '',
+  });
+
+  const [ client_info, set_client_info ] = useState({
+    'Full Name': '',
+    'Email': '',
+    'Phone Number': '',
+  });
+
   const [ tStates, setTStates ] = useState(() => {
     const timeSlotButtonStates = {};
     props.timeslots.forEach((t,i) => timeSlotButtonStates[`timeSlotState_${i}`] = false );
     return timeSlotButtonStates;
   });
-  const [clientInfo, setClientInfo] = useState({
-    'Full Name': '',
-    'Email': '',
-    'Phone Number': '',
-    'Massage Type': '',
-    'Massage Date/Time': ''
-  });
 
+  const [ selected_timeslot, set_selected_timeslot ] = useState(null);
+  const [ prices, set_prices ] = useState([]);
+
+  /** Input change handlers */
   const onTimeslotClick = (event) => {
+    event.preventDefault();
     setTStates(() => {
       Object.keys(tStates).forEach((k) => tStates[k] = false );
       return tStates
     });
-
     setTStates({
       ...tStates,
       [event.target.value]: true
     });
-    setSelectedTimeslot(event.target.textContent);
+    set_selected_timeslot(event.target.textContent);
   };
 
   const onMassageChange = (event) => {
-    setMassageType(event.target.value)
-    setClientInfo({
-      ...clientInfo,
-      'Massage Type': event.target.value
+    event.preventDefault();
+    set_massage_details({
+      ...massage_details, 
+      'Massage Type': event.target.value,
+      'Appointment Length': massage_prices[event.target.value].time,
+      'Price': massage_prices[event.target.value].price
     });
-    setPrices(pricesObject[event.target.value]);
+    set_prices(massage_prices[event.target.value]);
   };
 
   const onPriceChange = (event) => {
-    setSelectedPrice(event.target.value);
+    event.preventDefault();
+    set_massage_details({
+      ...massage_details, 
+      'Price': event.target.value
+    });
+  };
+
+  const on_input_change = async (event) => {
+    event.preventDefault();
+    switch (event.target.id) {
+      case 'FULL_NAME_ID':
+        set_client_info({
+          'Full Name': event.target.value,
+        });
+        break;
+      case 'EMAIL_ID':
+        set_client_info({
+          'Email': event.target.value,
+        });
+        break;
+      case 'PHONE_NUMBER_ID':
+        set_client_info({
+          'Phone Number': event.target.value,
+        });
+        break;
+      default: 
+        break;
+    }
   };
   
-  const handleSubmit = async (clientInfo) => {
+  const handleSubmit = async () => {
+    
+    /** Handle Error Checking Here */
     const current_date = props.selectedDate.split('T')[0];
-    const in_time = toISOStringWithTimezone(new Date(`${current_date} ${selectedTimeslot}`));
-    const out_time = new Date(in_time).setMinutes(in_time.getMinutes() + 30);
-    console.log(`${current_date} ${selectedTimeslot}`);
-    console.log("Selected Time Slot", in_time);
+    const in_time = toISOStringWithTimezone(new Date(`${current_date} ${selected_timeslot}`));
+    const out_time = toISOStringWithTimezone(new Date(new Date(in_time).setMinutes(in_time.getMinutes() + massage_details['Appointment Length'])));
 
     // await sendEmail({
-    //   "subject": `Appointment for ${clientInfo["Full Name"]}`,
+    //   "subject": `Appointment for ${client_info["Full Name"]}`,
     //   "message": {
-    //     "name": `${clientInfo["Full Name"]}`,
-    //     "date": clientInfo["Appointment Date"],
-    //     "time": clientInfo["Appointment Date"],
+    //     "name": `${client_info["Full Name"]}`,
+    //     "date": client_info["Appointment Date"],
+    //     "time": client_info["Appointment Date"],
     //     "type": massageType,
     //     "price": 20
     //   } 
     // });
 
     await createAppointment({
-      "INTIME": "2023-01-07T18:00:00-07:00",
-      "OUTTIME": "2023-01-07T19:00:00-07:00",
+      "INTIME": in_time,
+      "OUTTIME": out_time,
       "DETAILS": {
-          "FULL_NAME": clientInfo["Full Name"],
-          "LOCATION": "Testing Location", 
-          "EMAIL": clientInfo["Email"], 
-          "PHONE_NUMBER": clientInfo["Phone Number"],
-          "MASSAGE_TYPE": massageType
+          "FULL_NAME": client_info["Full Name"],
+          "LOCATION": props.store_location, 
+          "EMAIL": client_info["Email"], 
+          "PHONE_NUMBER": client_info["Phone Number"],
+          "MASSAGE_TYPE": massage_details['Massage Type'],
+          'PRICE': massage_details['Price']
       }
     });
 
@@ -166,7 +202,7 @@ const AppointmentForm = props => {
         <Box className="massageDate">
           { new Date(props.selectedDate).toDateString() }
         </Box>
-        <form className="appointment-form-sub">
+        <Box className="appointment-form-sub">
             <Box
               component="form"
               sx={{
@@ -180,8 +216,14 @@ const AppointmentForm = props => {
               autoComplete="off"
             >
               {
-                userFields.map(fieldName => (
-                  <TextField key={`${fieldName}-id`} id={`${fieldName}-id`} label={fieldName} variant="standard" />
+                user_fields.map(fieldName => (
+                  <TextField 
+                    onChange={ on_input_change }
+                    key={ `${fieldName}-id` } 
+                    id={ String(`${fieldName}_ID`).toUpperCase() } 
+                    label={fieldName} 
+                    variant="standard" 
+                  />
                 ))
               }
             </Box>
@@ -211,56 +253,54 @@ const AppointmentForm = props => {
                 <Select
                   labelId="massage-type-id"
                   id="massage-type-select"
-                  value={ massageType }
+                  value={ massage_details['Massage Type'] }
                   label="Massage Type*"
                   onChange={ onMassageChange }
                   className="select-class"
                 >
                   {
-                    massageTypes.map((m, i) => (
+                    massage_types.map((m, i) => (
                       m.massage && (
                       <MenuItem value={`${m.massage}`} key={`${m.massage}-${i}`}>
                           <em> { m.massage } </em>
                       </MenuItem> )
                     ))
                   }
-                </Select>
-                <br />
-                <br />
-                {
-                  massageType && (
-                    <FormControl required fullWidth>
-                      <InputLabel id="massage-prices-id">Massage Prices*</InputLabel>
-                      <Select
-                        labelId="massage-prices-id"
-                        id="massage-prices-select"
-                        value={ selectedPrice }
-                        label="Massage Prices*"
-                        onChange={ onPriceChange }
-                        className="select-class"
-                      >
-                        {
-                          prices && 
-                            ( 
-                              prices.map((m, i) => (
-                                <MenuItem value={`${m}`} key={`${m.txt}-${i}`}>
-                                  <em> { m.txt } </em>
-                                </MenuItem>
-                              ))
-                            )
-                        }
-                      </Select>
-                    </FormControl>
-                  )
-                }
+                  </Select>
+                  {
+                    massage_details['Massage Type'] !== '' ? (
+                      <FormControl required fullWidth>
+                        <InputLabel id="massage-prices-id">Massage Prices*</InputLabel>
+                        <Select
+                          labelId="massage-prices-id"
+                          id="massage-prices-select"
+                          value={ massage_details['Price'] }
+                          label="Massage Prices*"
+                          onChange={ onPriceChange }
+                          className="select-class"
+                        >
+                          {
+                            prices && 
+                              ( 
+                                prices.map((m, i) => (
+                                  <MenuItem value={`${m}`} key={`${m.txt}-${i}`}>
+                                    <em> { m.txt } </em>
+                                  </MenuItem>
+                                ))
+                              )
+                          }
+                        </Select>
+                      </FormControl>
+                    ) : null
+                  }
               </FormControl>
             </Box>
-            <Box className="submit-button" onClick={ async () => await handleSubmit(clientInfo) } >
+            <Box className="submit-button" onClick={ async () => await handleSubmit() } >
               <a href="#">
                 Submit
               </a>
             </Box>
-        </form>
+        </Box>
       </Box>
     </>
   );

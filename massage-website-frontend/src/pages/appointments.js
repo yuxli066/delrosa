@@ -21,8 +21,6 @@ const Appointments = props => {
     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
     const apt_date_string = new Date(new Date(date).getTime() - tzoffset).toISOString().split('T')[0];
     const booked_times = times_not_available.SCHEDULE[apt_date_string] ? times_not_available.SCHEDULE[apt_date_string] : [];
-    console.log('Appointment Date String:', apt_date_string);
-    console.log('Booked Times', booked_times);
     set_appointment_date(date);
     set_booked_times(booked_times);
   };

@@ -116,6 +116,7 @@ const MakeAppointment = ({ location, data }) => {
           massageParlorName={ location_state.name }
           timeslots={ timeslots } 
           selectedDate={ location_state.selected_date } 
+          store_location={ location_state.name }
         />
       </Box>
     </Layout>
