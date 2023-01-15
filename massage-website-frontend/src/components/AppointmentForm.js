@@ -112,24 +112,18 @@ const AppointmentForm = props => {
     'Price': '',
   });
 
-  const [values, setValues] = React.useState({ 
+  const [client_info, set_client_info] = React.useState({ 
     full_name: '',
     email: '',
     phone_number: '' 
   });
 
-  const handleChange = (event) => {
-    setValues({
-      ...values,
+  const handle_input_change = (event) => {
+    set_client_info({
+      ...client_info,
       [event.target.name]: event.target.value,
     });
   };
-
-  const [ client_info, set_client_info ] = useState({
-    'FULL_NAME': "",
-    'EMAIL': "",
-    'PHONE_NUMBER': "+{0}(000)00-0000",
-  });
 
   const [ tStates, setTStates ] = useState(() => {
     const timeSlotButtonStates = {};
@@ -236,8 +230,8 @@ const AppointmentForm = props => {
                     <TextField
                       key={ `${fieldName.input_label}-id` } 
                       label={ fieldName.input_label } 
-                      value={ values[fieldName.name] }
-                      onChange={ handleChange }
+                      value={ client_info[fieldName.name] }
+                      onChange={ handle_input_change }
                       name={ fieldName.name }
                       id={ String(fieldName.input_label).toUpperCase() } 
                       InputProps={{
