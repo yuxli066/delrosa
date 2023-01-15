@@ -1,11 +1,35 @@
 import React, { useState, useRef } from 'react';
 import { MenuItem, Select, FormControl, InputLabel, Button, TextField, Box } from '@mui/material';
 import { sendEmail, createAppointment } from "../services/appointmentService";
-// import { graphql } from 'gatsby';
-
+import NumberFormat from 'react-number-format';
+import { TextMaskCustom } from '../components/InputMask';
 import '../scss/components/_appointment-form.scss';
 
-const user_fields = ['Full Name', 'Email', 'Phone Number'];
+const user_fields = [ 
+  { 
+    input_label: 'Full Name', 
+    input_pattern: '[0-9]*',
+    name: 'full_name',
+    lazy_flag: true,
+  }, 
+  { 
+    input_label: 'Email', 
+    input_pattern: '[0-9]*',
+    name: 'email',
+    lazy_flag: false,
+  }, 
+  { 
+    input_label: 'Phone Number',
+    input_pattern: '[0-9]*',
+    name: 'phone_number',
+    lazy_flag: true
+  }
+];
+const user_field_errors = {
+  'Full Name': 'Please enter a name into the field', 
+  'Email': 'Please enter an email into the field', 
+  'Phone Number': 'Please enter a phone number into the field'
+};
 const massage_types = [ 
   {
     massage: null
@@ -17,13 +41,12 @@ const massage_types = [
     massage: "Body Oil Massage", 
   }, 
 ];
-
 const massage_prices = {
   "Body Oil Massage": [ 
     {
       txt:  " 120 minutes - $90 ", 
       time: 120, 
-      price: 90,
+      price: 90, 
     }, 
     { 
       txt: " 105 minutes - $80 ", 
@@ -60,7 +83,6 @@ const massage_prices = {
   ]
 };
 
-
 /* Shamelessly stolen from the following page:  
  * https://www.30secondsofcode.org/js/s/to-iso-string-with-timezone 
 **/
@@ -85,14 +107,28 @@ const AppointmentForm = props => {
   /** Massage Details & Client Info states */
   const [ massage_details, set_massage_details ] = useState({
     'Massage Type': '',
+    'Description': '',
     'Appointment Length': '',
     'Price': '',
   });
 
+  const [values, setValues] = React.useState({ 
+    full_name: '',
+    email: '',
+    phone_number: '' 
+  });
+
+  const handleChange = (event) => {
+    setValues({
+      ...values,
+      [event.target.name]: event.target.value,
+    });
+  };
+
   const [ client_info, set_client_info ] = useState({
-    'Full Name': '',
-    'Email': '',
-    'Phone Number': '',
+    'FULL_NAME': "",
+    'EMAIL': "",
+    'PHONE_NUMBER': "+{0}(000)00-0000",
   });
 
   const [ tStates, setTStates ] = useState(() => {
@@ -100,7 +136,7 @@ const AppointmentForm = props => {
     props.timeslots.forEach((t,i) => timeSlotButtonStates[`timeSlotState_${i}`] = false );
     return timeSlotButtonStates;
   });
-
+  const [ selected_massage, set_selected_massage ] = useState(null);
   const [ selected_timeslot, set_selected_timeslot ] = useState(null);
   const [ prices, set_prices ] = useState([]);
 
@@ -120,44 +156,22 @@ const AppointmentForm = props => {
 
   const onMassageChange = (event) => {
     event.preventDefault();
+    set_prices(massage_prices[event.target.value]);
     set_massage_details({
       ...massage_details, 
       'Massage Type': event.target.value,
-      'Appointment Length': massage_prices[event.target.value].time,
-      'Price': massage_prices[event.target.value].price
     });
-    set_prices(massage_prices[event.target.value]);
   };
 
   const onPriceChange = (event) => {
     event.preventDefault();
+    console.log(prices, event)
     set_massage_details({
       ...massage_details, 
-      'Price': event.target.value
+      'Description': event.target.value,
+      'Appointment Length': prices.find(m => String(m.txt).trim() === String(event.target.value).trim()).time,
+      'Price': prices.find(m => String(m.txt).trim() === String(event.target.value).trim()).price,
     });
-  };
-
-  const on_input_change = async (event) => {
-    event.preventDefault();
-    switch (event.target.id) {
-      case 'FULL_NAME_ID':
-        set_client_info({
-          'Full Name': event.target.value,
-        });
-        break;
-      case 'EMAIL_ID':
-        set_client_info({
-          'Email': event.target.value,
-        });
-        break;
-      case 'PHONE_NUMBER_ID':
-        set_client_info({
-          'Phone Number': event.target.value,
-        });
-        break;
-      default: 
-        break;
-    }
   };
   
   const handleSubmit = async () => {
@@ -165,8 +179,9 @@ const AppointmentForm = props => {
     /** Handle Error Checking Here */
     const current_date = props.selectedDate.split('T')[0];
     const in_time = toISOStringWithTimezone(new Date(`${current_date} ${selected_timeslot}`));
-    const out_time = toISOStringWithTimezone(new Date(new Date(in_time).setMinutes(in_time.getMinutes() + massage_details['Appointment Length'])));
+    const out_time = toISOStringWithTimezone(new Date( new Date(in_time).setMinutes(in_time.getMinutes() + massage_details['Appointment Length']) ));
 
+    console.log(massage_details)
     // await sendEmail({
     //   "subject": `Appointment for ${client_info["Full Name"]}`,
     //   "message": {
@@ -216,15 +231,24 @@ const AppointmentForm = props => {
               autoComplete="off"
             >
               {
-                user_fields.map(fieldName => (
-                  <TextField 
-                    onChange={ on_input_change }
-                    key={ `${fieldName}-id` } 
-                    id={ String(`${fieldName}_ID`).toUpperCase() } 
-                    label={fieldName} 
-                    variant="standard" 
-                  />
-                ))
+                user_fields.map(fieldName => {
+                  return (
+                    <TextField
+                      key={ `${fieldName.input_label}-id` } 
+                      label={ fieldName.input_label } 
+                      value={ values[fieldName.name] }
+                      onChange={ handleChange }
+                      name={ fieldName.name }
+                      id={ String(fieldName.input_label).toUpperCase() } 
+                      InputProps={{
+                        inputComponent: TextMaskCustom,
+                      }}
+                      error={ false }
+                      helperText=""
+                      variant="standard"
+                    />
+                  );
+                })
               }
             </Box>
             { props.timeslots.length > 0 ? ( <Box className="timeslot-container">
@@ -268,13 +292,13 @@ const AppointmentForm = props => {
                   }
                   </Select>
                   {
-                    massage_details['Massage Type'] !== '' ? (
+                    ( massage_details['Massage Type'] !== '' ) ? (
                       <FormControl required fullWidth>
                         <InputLabel id="massage-prices-id">Massage Prices*</InputLabel>
                         <Select
                           labelId="massage-prices-id"
                           id="massage-prices-select"
-                          value={ massage_details['Price'] }
+                          value={ massage_details['Description'] }
                           label="Massage Prices*"
                           onChange={ onPriceChange }
                           className="select-class"
@@ -283,7 +307,7 @@ const AppointmentForm = props => {
                             prices && 
                               ( 
                                 prices.map((m, i) => (
-                                  <MenuItem value={`${m}`} key={`${m.txt}-${i}`}>
+                                  <MenuItem value={`${m.txt}`} key={`${m.txt}-${i}`}>
                                     <em> { m.txt } </em>
                                   </MenuItem>
                                 ))
@@ -295,7 +319,7 @@ const AppointmentForm = props => {
                   }
               </FormControl>
             </Box>
-            <Box className="submit-button" onClick={ async () => await handleSubmit() } >
+            <Box className="submit-button" onClick={ handleSubmit } >
               <a href="#">
                 Submit
               </a>
