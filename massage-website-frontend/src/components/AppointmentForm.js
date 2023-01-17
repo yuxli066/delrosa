@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { MenuItem, Select, FormControl, InputLabel, Button, TextField, Box, Alert, Link } from '@mui/material';
 import { createAppointment } from "../services/appointmentService";
 import { TextMaskCustom } from '../components/InputMask';
@@ -8,20 +8,20 @@ const user_fields = [
   { 
     input_label: 'Full Name', 
     input_pattern: '[0-9]*',
-    name: 'full_name',
-    error_msg: 'Please enter a name into the field',
+    name: 'Full_Name',
+    error_msg: 'Please enter a valid name into the field',
   }, 
   { 
     input_label: 'Email', 
     input_pattern: '[0-9]*',
-    name: 'email',
-    error_msg: 'Please enter an email into the field',
+    name: 'Email',
+    error_msg: 'Please enter a valid Email into the field',
   }, 
   { 
     input_label: 'Phone Number',
     input_pattern: '[0-9]*',
-    name: 'phone_number',
-    error_msg: 'Please enter a phone number into the field'
+    name: 'Phone_Number',
+    error_msg: 'Please enter a valid Phone Number into the field'
   }
 ];
 const massage_types = [ 
@@ -104,15 +104,15 @@ const AppointmentForm = props => {
   });
 
   const [ client_info, set_client_info ] = React.useState(() => ({ 
-    full_name: {
+    Full_Name: {
       value: '',
       error: false,
     },
-    email: {
+    Email: {
       value: '',
       error: false
     },
-    phone_number: {
+    Phone_Number: {
       value: '', 
       error: false
     } 
@@ -125,34 +125,31 @@ const AppointmentForm = props => {
   const [ selected_timeslot, set_selected_timeslot ] = useState(null);
   const [ prices, set_prices ] = useState([]);
   const onTimeslotClick = (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     setTStates(() => {
       Object.keys(tStates).forEach((k) => tStates[k] = false );
-      return tStates
-    });
-    setTStates({
-      ...tStates,
-      [event.target.value]: true
+      return {
+        ...tStates,
+        [event.target.value]: true
+      }
     });
     set_selected_timeslot(event.target.textContent);
   };
   const handle_input_change = (event) => {
     let is_input_valid;
-    console.log(event.target.name, event.target.value);
     switch(event.target.name) {
-      case 'full_name':
-        is_input_valid = /[a-zA-Z\s]+/gm.test(event.target.value) && event.target.value.length > 0 && client_info[event.target.name].value !== '';
+      case 'Full_Name':
+        is_input_valid = /[a-zA-Z\s]+/gm.test(event.target.value) && event.target.value.length > 0;
         break;
-      case 'email':
-        is_input_valid = /[a-zA-Z0-9]+@[a-zA-Z0-9]+.com/gm.test(event.target.value) && event.target.value.length > 0 && client_info[event.target.name].value !== '';
+      case 'Email':
+        is_input_valid = /[a-zA-Z0-9]+@[a-zA-Z0-9]+.com/gm.test(event.target.value) && event.target.value.length > 0;
         break;
-      case 'phone_number': 
-        is_input_valid = /\+1 \(\d{3}\) \d{3}-\d{4}/gm.test(event.target.value) && event.target.value.length > 0 && client_info[event.target.name].value !== '';
+      case 'Phone_Number': 
+        is_input_valid = /\+1 \(\d{3}\) \d{3}-\d{4}/gm.test(event.target.value) && event.target.value.length > 0;
         break;
       default:
         break;
     }
-
     set_client_info(() => ({
       ...client_info,
       [event.target.name]: {
@@ -160,9 +157,6 @@ const AppointmentForm = props => {
           error: !is_input_valid
       }
     }));
-
-    console.log(client_info)
-
   };
   const onMassageChange = (event) => {
     event.preventDefault();
@@ -184,22 +178,35 @@ const AppointmentForm = props => {
   const [ fields_with_errors, set_fields_with_errors ] = useState([]);
   const handleSubmit = async () => {
 
+    /** Handle Error Checking Here */
+    const current_date = props.selectedDate.split('T')[0];
+    const in_time = toISOStringWithTimezone(new Date(`${current_date} ${selected_timeslot}`));
+    const out_time = toISOStringWithTimezone(new Date( new Date(in_time).setMinutes(in_time.getMinutes() + massage_details['Appointment Length']) ));
+    
     /** Check if any field contains errors */
     const errors = [];
+    let new_client_info = client_info;
     Object.entries(client_info).forEach(c_info => {
-      if (c_info[1].error === true) {
-        errors.push(c_info[0]);
+      if (c_info[1].error === true || client_info[c_info[0]].value === '') {
+        errors.push(c_info[0].replace('_',' '));
+        set_fields_with_errors(errors);
+        new_client_info = {
+          ...new_client_info,
+          [c_info[0]]: {
+              value: client_info[c_info[0]].value,
+              error: true
+          }
+        }
+        set_client_info(new_client_info);
       }
     });
-    
-    set_fields_with_errors(errors);
 
+    const input_is_valid = errors.length === 0 && 
+                           fields_with_errors.length === 0 && 
+                           in_time && 
+                           out_time;
 
-    if (errors.length === 0 && fields_with_errors.length === 0) {
-      /** Handle Error Checking Here */
-      const current_date = props.selectedDate.split('T')[0];
-      const in_time = toISOStringWithTimezone(new Date(`${current_date} ${selected_timeslot}`));
-      const out_time = toISOStringWithTimezone(new Date( new Date(in_time).setMinutes(in_time.getMinutes() + massage_details['Appointment Length']) ));
+    if (input_is_valid) {
 
       // await sendEmail({
       //   "subject": `Appointment for ${client_info["Full Name"]}`,
@@ -216,16 +223,15 @@ const AppointmentForm = props => {
         "INTIME": in_time,
         "OUTTIME": out_time,
         "DETAILS": {
-            "FULL_NAME": client_info.full_name.value,
+            "FULL_NAME": client_info.Full_Name.value,
             "LOCATION": props.store_location, 
-            "EMAIL": client_info.email.value, 
-            "PHONE_NUMBER": client_info.phone_number.value,
+            "EMAIL": client_info.Email.value, 
+            "PHONE_NUMBER": client_info.Phone_Number.value,
             "MASSAGE_TYPE": massage_details['Massage Type'],
             'PRICE': massage_details['Price']
         }
       }); 
     }
-
   };
 
   return (
@@ -264,7 +270,7 @@ const AppointmentForm = props => {
                         inputComponent: TextMaskCustom,
                       }}
                       error={ client_info[fieldName.name].error }
-                      helperText={ user_fields.error_msg }
+                      helperText={ String(fieldName.error_msg) }
                       variant="standard"
                     />
                   );
@@ -339,12 +345,15 @@ const AppointmentForm = props => {
                   }
               </FormControl>
             </Box>
-            <Box className="invalid-input">
-              {
-                fields_with_errors.length > 0 && (<Alert severity="error">{`Invalid input for ${fields_with_errors.join(', ')}`}</Alert>) 
-              }
-            </Box>
-            <Link onClick={ handleSubmit }>
+            {
+              fields_with_errors.length > 0 ? 
+                ( 
+                  <Box className="invalid-input">
+                    <Alert severity="error">{`Invalid input for ${fields_with_errors.join(', ')}`}</Alert>
+                  </Box>
+                ) : (<></>)
+            }
+            <Link onClick={ handleSubmit } >
               <Box className="submit-button" >
                 Submit
               </Box>

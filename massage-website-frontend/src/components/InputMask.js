@@ -4,9 +4,9 @@ import { IMaskInput, IMask } from 'react-imask';
 
 const TextMaskCustom = React.forwardRef(function TextMaskCustom(props, ref) {
     const get_mask = {
-      "full_name": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "email": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-      "phone_number": "+1 (###) ###-####" 
+      "Full_Name": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "Email": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "Phone_Number": "+1 (###) ###-####" 
     }
     const { onChange, name, lazy_flag, ...other } = props;
     const [ val, set_val ] = useState('');
