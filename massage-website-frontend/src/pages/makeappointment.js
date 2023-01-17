@@ -31,7 +31,6 @@ const get_massage_times = (name, date) => {
 }
 
 const get_available_slots = (todays_date, selected_date, parolor_name, booked_slots) => {
-  console.log('booked slots', booked_slots);
   const available_slots = [];
   const intlFormatOptions = { hour: "numeric", minute: "numeric", hourCycle: "h12" };
   const todays_date_string = new Date(todays_date).toLocaleDateString();
