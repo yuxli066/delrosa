@@ -28,7 +28,7 @@ func SendEmail(w http.ResponseWriter, r *http.Request) {
 		SERVERNAME: "smtp.gmail.com",
 		SERVERPORT: 587,
 		FROMEMAIL:  "paulli@delrosamassage.com",
-		TOEMAIL:    "yuxuan.leo.li@gmail.com",
+		TOEMAIL:    "paulli@delrosamassage.com",
 	}
 
 	var err error

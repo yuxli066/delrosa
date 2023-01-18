@@ -16,9 +16,9 @@ const TextMaskCustom = React.forwardRef(function TextMaskCustom(props, ref) {
         {...other}
         mask={get_mask[name]}
         definitions={{
-          '#': /[1-9]/,
+          '#': /[0-9]/,
           'b': /[a-zA-Z\s]/,
-          'e': /[1-9a-zA-Z\s@.]/
+          'e': /[0-9a-zA-Z\s@.]/
         }} 
         inputRef={ref}
         onAccept={(value) => {

@@ -114,7 +114,7 @@ const MakeAppointment = ({ location, data }) => {
         <AppointmentForm 
           massageParlorName={ location_state.name }
           timeslots={ timeslots } 
-          selectedDate={ location_state.selected_date } 
+          selectedDate={ new Date(location_state.selected_date).toLocaleDateString() } 
           store_location={ location_state.name }
         />
       </Box>

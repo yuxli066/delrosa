@@ -3,6 +3,7 @@ import httpCommon from "./httpCommon";
 export const sendEmail = (email) => httpCommon
     .post("sendEmail", email)
     .then((res) => {
+        console.log(res)
         if (res.status === 200) {
             return res.data;
         }

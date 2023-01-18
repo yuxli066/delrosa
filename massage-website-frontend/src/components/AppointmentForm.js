@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { MenuItem, Select, FormControl, InputLabel, Button, TextField, Box, Alert, Link } from '@mui/material';
-import { createAppointment } from "../services/appointmentService";
+import { createAppointment, sendEmail } from "../services/appointmentService";
 import { TextMaskCustom } from '../components/InputMask';
 import '../scss/components/_appointment-form.scss';
 
@@ -98,8 +98,6 @@ const AppointmentForm = props => {
   /** Massage Details & Client Info states */
   const [ massage_details, set_massage_details ] = useState({
     'Massage Type': '',
-    'Description': '',
-    'Appointment Length': '',
     'Price': '',
   });
 
@@ -189,7 +187,6 @@ const AppointmentForm = props => {
     Object.entries(client_info).forEach(c_info => {
       if (c_info[1].error === true || client_info[c_info[0]].value === '') {
         errors.push(c_info[0].replace('_',' '));
-        set_fields_with_errors(errors);
         new_client_info = {
           ...new_client_info,
           [c_info[0]]: {
@@ -201,23 +198,30 @@ const AppointmentForm = props => {
       }
     });
 
-    const input_is_valid = errors.length === 0 && 
-                           fields_with_errors.length === 0 && 
-                           in_time && 
-                           out_time;
+    if (String(in_time) === 'Invalid Date' || String(out_time) === 'Invalid Date') {
+      errors.push('Appointment Time Slot');
+    }
+    if (massage_details['Massage Type'] === '') {
+      errors.push('Massage Type');
+    }
+    if (massage_details['Price'] === '') {
+      errors.push('Massage Price/Duration');
+    }
 
-    if (input_is_valid) {
-
-      // await sendEmail({
-      //   "subject": `Appointment for ${client_info["Full Name"]}`,
-      //   "message": {
-      //     "name": `${client_info["Full Name"]}`,
-      //     "date": client_info["Appointment Date"],
-      //     "time": client_info["Appointment Date"],
-      //     "type": massageType,
-      //     "price": 20
-      //   } 
-      // });
+    set_fields_with_errors(errors);
+    
+    if (errors.length === 0) {
+      
+      await sendEmail({
+        "subject": `Appointment for ${client_info.Full_Name.value}`,
+        "message": {
+          "name": `${client_info.Full_Name.value}`,
+          "date": current_date,
+          "time": `From ${in_time} to ${out_time}`,
+          "type": massage_details['Massage Type'],
+          "price": massage_details['Price']
+        } 
+      });
 
       await createAppointment({
         "INTIME": in_time,
