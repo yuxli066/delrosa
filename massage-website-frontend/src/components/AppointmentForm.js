@@ -211,13 +211,39 @@ const AppointmentForm = props => {
     set_fields_with_errors(errors);
     
     if (errors.length === 0) {
-      
+      const date_options = { weekday: 'long', month: 'long', day: 'numeric' };
+      const time_options = { hour: 'numeric', minute: '2-digit' };
+
+      const store_email = 'paulli@delrosamassage.com';
+      const in_date_formatted = new Date(in_time).toLocaleDateString('en-US', date_options);
+      const in_time_formatted = new Date(in_time).toLocaleTimeString('en-US', time_options);
+      const out_time_formatted = new Date(out_time).toLocaleTimeString('en-US', time_options);
+
+      // send email notification to store/us
       await sendEmail({
+        "email_type": "massage", 
         "subject": `Appointment for ${client_info.Full_Name.value}`,
+        "toemail": store_email,
         "message": {
           "name": `${client_info.Full_Name.value}`,
+          "massage_parlor": props.massageParlorName,
           "date": current_date,
-          "time": `From ${in_time} to ${out_time}`,
+          "time": `From ${in_time_formatted} to ${out_time_formatted}`,
+          "type": massage_details['Massage Type'],
+          "price": massage_details['Price']
+        } 
+      });
+
+      // send email notification to client
+      await sendEmail({
+        "email_type": "client", 
+        "subject": `Hello ${client_info.Full_Name.value}, Your appointment on ${in_date_formatted}`,
+        "toemail": client_info.Email.value,
+        "message": {
+          "name": `${client_info.Full_Name.value}`,
+          "massage_parlor": props.massageParlorName,
+          "date": in_date_formatted,
+          "time": in_time_formatted,
           "type": massage_details['Massage Type'],
           "price": massage_details['Price']
         } 

@@ -13,13 +13,16 @@ import (
 )
 
 type EmailMessage struct {
-	SUBJECT string
-	MESSAGE struct {
-		NAME  string
-		DATE  string
-		TIME  string
-		TYPE  string
-		PRICE int
+	EMAIL_TYPE string
+	TOEMAIL    string
+	SUBJECT    string
+	MESSAGE    struct {
+		NAME           string
+		MASSAGE_PARLOR string
+		DATE           string
+		TIME           string
+		TYPE           string
+		PRICE          int
 	}
 }
 
@@ -29,8 +32,7 @@ type Email struct {
 	SERVERNAME string
 	SERVERPORT int
 	FROMEMAIL  string
-	TOEMAIL    string
-	EMAILBODY  EmailMessage
+	EMAIL      EmailMessage
 }
 
 type EmailSender interface {
@@ -45,15 +47,29 @@ type EmailSender interface {
 }
 
 func (e Email) ConstructEmailMsg() []byte {
-	return []byte("To: " + e.TOEMAIL + "\r\n" +
-		"Subject: " + e.EMAILBODY.SUBJECT + "\r\n" +
+	return []byte("To: " + e.EMAIL.TOEMAIL + "\r\n" +
+		"Subject: " + e.EMAIL.SUBJECT + "\r\n" +
 		"\r\n\r\n" +
-		"Client Name: " + e.EMAILBODY.MESSAGE.NAME + "\r\n" +
-		"Appointment Date: " + e.EMAILBODY.MESSAGE.DATE + "\r\n" +
-		"Appointment Time: " + e.EMAILBODY.MESSAGE.TIME + "\r\n" +
-		"Massage Type: " + e.EMAILBODY.MESSAGE.TYPE + "\r\n" +
-		"Price: $" + strconv.Itoa(e.EMAILBODY.MESSAGE.PRICE) + "\r\n\r\n" +
+		"Client Name: " + e.EMAIL.MESSAGE.NAME + "\r\n" +
+		"Appointment Date: " + e.EMAIL.MESSAGE.DATE + "\r\n" +
+		"Appointment Time: " + e.EMAIL.MESSAGE.TIME + "\r\n" +
+		"Massage Type: " + e.EMAIL.MESSAGE.TYPE + "\r\n" +
+		"Price: $" + strconv.Itoa(e.EMAIL.MESSAGE.PRICE) + "\r\n\r\n" +
 		"Please note that this has been added to the calendar." +
+		"\r\n")
+}
+
+func (e Email) Construct_Client_Email() []byte {
+	return []byte("To: " + e.EMAIL.TOEMAIL + "\r\n" +
+		"Subject: " + e.EMAIL.SUBJECT + "\r\n" +
+		"\r\n\r\n" +
+		"Hello " + e.EMAIL.MESSAGE.NAME + ",\r\n\n" +
+		"Thank you for your reservation at " + e.EMAIL.MESSAGE.MASSAGE_PARLOR + ".\r\n\n" +
+		"We are expecting you on " + e.EMAIL.MESSAGE.DATE + " at " + e.EMAIL.MESSAGE.TIME + "\r\n" +
+		"We are looking forward to your visit and hope you will have a great massage experience with us!" + "\r\n\n" +
+		"Below are the details to your appointment: " + "\r\n" +
+		"Massage Type: " + e.EMAIL.MESSAGE.TYPE + "\r\n\n" +
+		"Price: $" + strconv.Itoa(e.EMAIL.MESSAGE.PRICE) + "\r\n\r\n" +
 		"\r\n")
 }
 
@@ -116,7 +132,7 @@ func (e Email) SendMail() {
 	if err != nil {
 		log.Println("MAIL ERROR:", err.Error())
 	}
-	err = e.SERVER.Rcpt(e.TOEMAIL)
+	err = e.SERVER.Rcpt(e.EMAIL.TOEMAIL)
 	if err != nil {
 		log.Println("RECEIPT ERROR:", err.Error())
 	}
@@ -124,10 +140,19 @@ func (e Email) SendMail() {
 	if err != nil {
 		log.Println("DATA ERROR:", err.Error())
 	}
-	_, err = emailData.Write([]byte(e.ConstructEmailMsg()))
-	if err != nil {
-		log.Println("DATA WRITE ERROR:", err.Error())
+
+	if e.EMAIL.EMAIL_TYPE == "client" {
+		_, err = emailData.Write([]byte(e.Construct_Client_Email()))
+		if err != nil {
+			log.Println("DATA WRITE ERROR:", err.Error())
+		}
+	} else if e.EMAIL.EMAIL_TYPE == "massage" {
+		_, err = emailData.Write([]byte(e.ConstructEmailMsg()))
+		if err != nil {
+			log.Println("DATA WRITE ERROR:", err.Error())
+		}
 	}
+
 	err = emailData.Close()
 	if err != nil {
 		log.Println("DATA CLOSE ERROR:", err.Error())

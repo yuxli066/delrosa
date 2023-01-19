@@ -28,7 +28,6 @@ func SendEmail(w http.ResponseWriter, r *http.Request) {
 		SERVERNAME: "smtp.gmail.com",
 		SERVERPORT: 587,
 		FROMEMAIL:  "paulli@delrosamassage.com",
-		TOEMAIL:    "paulli@delrosamassage.com",
 	}
 
 	var err error
@@ -45,7 +44,7 @@ func SendEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.Unmarshal([]byte(b), &emailClient.EMAILBODY)
+	json.Unmarshal([]byte(b), &emailClient.EMAIL)
 
 	emailClient.Execute()
 	fmt.Println("Email Sent!")
