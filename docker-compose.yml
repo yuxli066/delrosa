@@ -1,24 +1,27 @@
-version: "3.7"
+version: "3.9"
 
 services:
   
-  massagewebsite: 
-    image: yuxuanleoli/massagewebsite
+  massagewebsite-frontend: 
+    container_name: massage-frontend
+    image: yuxuanleoli/massagewebsite-frontend
     restart: always
     build:
-      context: ../
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile_frontend
     ports:
-      - "3000:3000"
       - "80:80"
+    environment:
+      - NODE_ENV=production
   
-  portainer:
-    image: portainer/portainer-ce
+  massagewebsite-backend: 
+    container_name: massage-backend
+    image: yuxuanleoli/massagewebsite-backend
     restart: always
-    command: -H unix:///var/run/docker.sock
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
-
-volumes:
-  portainer_data:
+    build:
+      context: .
+      dockerfile: Dockerfile_backend
+    ports:
+      - "65535:65535"
+    environment:
+      - NODE_ENV=production

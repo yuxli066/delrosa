@@ -1,0 +1,20 @@
+# The base go-image
+FROM golang:1.17.11-alpine3.16
+WORKDIR /app
+
+RUN apk update && apk add curl
+
+# Explicitly copy over go.mod file for go packages
+COPY ./massage-website-backend/go.mod ./massage-website-backend/go.mod 
+
+# Copy over backend src files
+COPY ./massage-website-backend ./massage-website-backend
+
+# Build go server
+WORKDIR /app/massage-website-backend
+
+RUN go build ./src/github.com/yuxli066/massage/Main.go
+
+# Run the server executable
+EXPOSE 65535
+CMD [ "/app/massage-website-backend/Main" ]

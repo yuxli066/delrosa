@@ -27,7 +27,10 @@ export const getAvailability = () => httpCommon
     .get("getAvailability")
     .then((res) => {
         if (res.status === 200) {
-            return res.data;
+            return {
+                status: res.status,
+                data: res.data
+            }
         }
     })
     .catch((err) => 

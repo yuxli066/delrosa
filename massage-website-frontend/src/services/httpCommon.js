@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// constant variables
-const base = process.env.NODE_ENV !== "production" ? "http://localhost:3000/api/" : "remote url";
+const api_port_number = '65535';
+const base = process.env.NODE_ENV !== "production" ? `http://localhost:${api_port_number}/api/` : `massagewebsite-backend:${api_port_number}/api/`;
 
 export default axios.create({
   baseURL: base,

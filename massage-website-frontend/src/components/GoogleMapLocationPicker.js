@@ -1,6 +1,7 @@
 import React from "react";
 import GoogleMapLocationMarker from "./GoogleMapLocationMarker";
 import GoogleMapReact from 'google-map-react';
+import { Box } from '@mui/material';
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
@@ -15,7 +16,7 @@ export default function GoogleMapLocationPicker() {
   
     return (
       // Important! Always set the container height explicitly
-      <div style={{ minWidth: '24%' }}>
+      <Box component="div" style={{ minWidth: '24%' }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIzaSyDwcUJld3Tdz3hSLI6S9YLFMIOjuGJHKgY" }}
           defaultCenter={defaultProps.center}
@@ -32,6 +33,6 @@ export default function GoogleMapLocationPicker() {
             text={<GoogleMapLocationMarker />}
           />
         </GoogleMapReact>
-      </div>
+      </Box>
     );
   }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { List, ListItem, Divider, Box } from '@mui/material';
+import { List, ListItem, Divider, Box, Skeleton, Stack  } from '@mui/material';
 import { DatePickerCalendar } from 'react-nice-dates';
 import { enGB } from 'date-fns/locale';
 import SiteSEO from '../components/SiteSEO';
@@ -16,6 +16,15 @@ const Appointments = props => {
   const [ appointment_date, set_appointment_date ] = useState(new Date());
   const [ times_not_available, set_times_not_available ] = useState(null);
   const [ booked_times, set_booked_times ] = useState(null);
+  const marginBlocks = '1.5em';
+  const SkeletonStyleObject = {
+    borderRadius: "0.75em",
+    border: "0px",
+    marginBlockStart: marginBlocks,
+    marginBlockEnd: marginBlocks,
+    marginInlineStart: marginBlocks,
+    marginInlineEnd: marginBlocks
+  };
 
   const handleDateChange = (date) => {
     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
@@ -37,24 +46,26 @@ const Appointments = props => {
   useEffect(() => {
     getAvailability()
       .then((times) => {
-        set_times_not_available(times);
-        const appt_date = appointment_date.toLocaleString('en-US', { 
-          timeZone: 'America/Los_Angeles',
-          day: "2-digit", 
-          month: "2-digit", 
-          year: "numeric",
-          hourCycle: "h12"
-        }).split(',')[0];
-        const appt_date_els = appt_date.split('/'); 
-        const appt_date_string = `${appt_date_els[2]}-${appt_date_els[0]}-${appt_date_els[1]}`;
-        console.log(appt_date_string)
-        const booked_times = times.SCHEDULE[appt_date_string] ? times.SCHEDULE[appt_date_string] : [];
-        set_booked_times(booked_times);
-        console.log(booked_times)
+        if (times && times.status === 200) {
+          set_times_not_available(times.data);
+          const appt_date = appointment_date.toLocaleString('en-US', { 
+            timeZone: 'America/Los_Angeles',
+            day: "2-digit", 
+            month: "2-digit", 
+            year: "numeric",
+            hourCycle: "h12"
+          }).split(',')[0];
+          const appt_date_els = appt_date.split('/'); 
+          const appt_date_string = `${appt_date_els[2]}-${appt_date_els[0]}-${appt_date_els[1]}`;
+          console.log(appt_date_string)
+          const booked_times = times.data.SCHEDULE[appt_date_string] ? times.data.SCHEDULE[appt_date_string] : [];
+          set_booked_times(booked_times);
+          console.log(booked_times);
+        };
       });
   }, []);
 
-  return ( times_not_available && booked_times !== null ) &&  (
+  return ( times_not_available && booked_times !== null ) ? (
     <Layout bodyClass="page-teams">
       <SiteSEO title="Appointments" />
       <Box className="pContainer">
@@ -109,7 +120,51 @@ const Appointments = props => {
         </List>
       </Box>
     </Layout>
-  );
+  ) : (
+    <Layout bodyClass="page-teams">
+      <SiteSEO title="Appointments" />
+        <Box className="pContainer">
+          <Box component="div" style={{ minWidth: '24%'}}>
+            <Skeleton 
+              variant="rounded"
+              height={"95%"}
+              style={SkeletonStyleObject}
+            />
+          </Box>
+          <Box 
+            className="calendarContainer" 
+            style={{border: '0px'}}
+          >
+            <Skeleton 
+              variant="rounded" 
+              animation="wave"
+              height={"100%"} 
+              className="calendarContainer"
+              style={SkeletonStyleObject}
+            />
+          </Box>
+        <Divider />
+        <List 
+            className="locationContainer" 
+            component="nav" 
+            aria-label="massage parlor location selections"
+        >
+          <Skeleton 
+            variant="rounded"
+            height={"100%"} 
+            style={SkeletonStyleObject}
+          />
+          <Divider />
+          <Skeleton 
+            variant="rounded" 
+            animation="wave"
+            height={"100%"} 
+            style={SkeletonStyleObject}
+          />
+        </List>
+      </Box>
+    </Layout>
+  )
 };
 
 export default Appointments;

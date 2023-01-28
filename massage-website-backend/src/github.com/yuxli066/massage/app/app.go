@@ -11,15 +11,14 @@ import (
 
 // App struct holds key app components, such as the api router
 type App struct {
-	Router       *mux.Router
-	ApiRouter    *mux.Router
-	StaticRouter *mux.Router
+	Router    *mux.Router
+	ApiRouter *mux.Router
 }
 
 // Initialize server application & serve static files
 func (a *App) Initialize() {
 	a.Router = mux.NewRouter()
-	a.ApiRouter = a.Router.PathPrefix("/api/").Subrouter()
+	a.ApiRouter = mux.NewRouter()
 
 	// set api routers
 	a.setRouters()
@@ -48,10 +47,10 @@ func (a *App) Initialize() {
 
 // The setRouters function specifies different backend routes for the api
 func (a *App) setRouters() {
-	a.Get("/ping", a.handleRequest(handler.GetHealthCheck))
-	a.Get("/getAvailability", a.handleRequest(handler.GetAvailability))
-	a.Post("/sendEmail", a.handleRequest(handler.SendEmail))
-	a.Post("/createAppointment", a.handleRequest(handler.SetNewAppointment))
+	a.Get("/api/ping", a.handleRequest(handler.GetHealthCheck))
+	a.Get("/api/getAvailability", a.handleRequest(handler.GetAvailability))
+	a.Post("/api/sendEmail", a.handleRequest(handler.SendEmail))
+	a.Post("/api/createAppointment", a.handleRequest(handler.SetNewAppointment))
 }
 
 // HTTP CRUD wrapper function for HTTP GET
@@ -67,6 +66,10 @@ func (a *App) Post(path string, f func(w http.ResponseWriter, r *http.Request)) 
 // The Run function runs the api on specified port number
 func (a *App) Run(host string) {
 	log.Fatal(http.ListenAndServe(host, a.Router))
+}
+
+func (a *App) Api_Run(host string) {
+	log.Fatal(http.ListenAndServe(host, a.ApiRouter))
 }
 
 // The RequestHandlerFunction handles incoming http requests
