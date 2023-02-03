@@ -3,7 +3,7 @@ version: "3.9"
 services:
   
   massagewebsite-frontend: 
-    container_name: massage-frontend
+    container_name: massagewebsite-frontend
     image: yuxuanleoli/massagewebsite-frontend
     restart: always
     build:
@@ -13,9 +13,10 @@ services:
       - "80:80"
     environment:
       - NODE_ENV=production
+    network_mode: host
   
   massagewebsite-backend: 
-    container_name: massage-backend
+    container_name: massagewebsite-backend
     image: yuxuanleoli/massagewebsite-backend
     restart: always
     build:
@@ -25,3 +26,4 @@ services:
       - "65535:65535"
     environment:
       - NODE_ENV=production
+    network_mode: host

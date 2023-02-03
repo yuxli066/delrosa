@@ -15,24 +15,10 @@ RUN yarn
 RUN yarn build
 
 # The base go-image
-FROM golang:1.17.11-alpine3.16
-WORKDIR /app
+FROM nginx:latest AS deploy
 
-# Explicitly copy over go.mod file for go packages
-COPY ./massage-website-backend/go.mod ./massage-website-backend/go.mod 
+WORKDIR /usr/share/nginx/html
+RUN rm -rf ./*
+COPY --from=node-frontend /app/massage-website-frontend/public .
 
-# Copy over backend src files
-COPY ./massage-website-backend ./massage-website-backend
-
-# Build go server
-WORKDIR /app/massage-website-backend
-
-# Copy over static content from frontend build stage
-COPY --from=node-frontend /app/massage-website-frontend/public ./massage-website-frontend/public
-RUN go build ./src/github.com/yuxli066/massage/Main.go
-
-RUN apk update && apk add curl
-
-# Run the server executable
-EXPOSE 80
-CMD [ "/app/massage-website-backend/Main" ]
+CMD [ "nginx", "-g", "daemon off;" ]

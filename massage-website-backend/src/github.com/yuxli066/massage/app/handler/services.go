@@ -57,7 +57,7 @@ func GetAvailability(w http.ResponseWriter, r *http.Request) {
 	var c calendarClient.GoogleCalendar = calendarClient.GoogleCalendar{
 		CTX:            ctx,
 		USEREMAIL:      "paulli@delrosamassage.com",
-		CONFIGFILEPATH: "src/github.com/yuxli066/massage/certs/massage-calendar.json",
+		CONFIGFILEPATH: "./src/github.com/yuxli066/massage/certs/massage-calendar.json",
 		SCOPE:          calendar.CalendarScope,
 	}
 	c.Authenticate()

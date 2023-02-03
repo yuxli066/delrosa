@@ -17,4 +17,4 @@ RUN go build ./src/github.com/yuxli066/massage/Main.go
 
 # Run the server executable
 EXPOSE 65535
-CMD [ "/app/massage-website-backend/Main" ]
+CMD [ "./Main", "backend" ]

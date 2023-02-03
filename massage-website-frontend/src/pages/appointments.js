@@ -16,14 +16,9 @@ const Appointments = props => {
   const [ appointment_date, set_appointment_date ] = useState(new Date());
   const [ times_not_available, set_times_not_available ] = useState(null);
   const [ booked_times, set_booked_times ] = useState(null);
-  const marginBlocks = '1.5em';
   const SkeletonStyleObject = {
     borderRadius: "0.75em",
     border: "0px",
-    marginBlockStart: marginBlocks,
-    marginBlockEnd: marginBlocks,
-    marginInlineStart: marginBlocks,
-    marginInlineEnd: marginBlocks
   };
 
   const handleDateChange = (date) => {
@@ -46,6 +41,7 @@ const Appointments = props => {
   useEffect(() => {
     getAvailability()
       .then((times) => {
+        console.log("API REQUEST AVAILABILITIES:");
         if (times && times.status === 200) {
           set_times_not_available(times.data);
           const appt_date = appointment_date.toLocaleString('en-US', { 
@@ -57,13 +53,13 @@ const Appointments = props => {
           }).split(',')[0];
           const appt_date_els = appt_date.split('/'); 
           const appt_date_string = `${appt_date_els[2]}-${appt_date_els[0]}-${appt_date_els[1]}`;
-          console.log(appt_date_string)
+          // console.log(appt_date_string)
           const booked_times = times.data.SCHEDULE[appt_date_string] ? times.data.SCHEDULE[appt_date_string] : [];
           set_booked_times(booked_times);
-          console.log(booked_times);
+          // console.log(booked_times);
         };
       });
-  }, []);
+  }, [appointment_date]);
 
   return ( times_not_available && booked_times !== null ) ? (
     <Layout bodyClass="page-teams">
@@ -88,35 +84,35 @@ const Appointments = props => {
           component="nav" 
           aria-label="massage parlor location selections"
         >
-            <Divider />
-            <AniLink 
-              to="/makeappointment/" 
-              state={{ 
-                name: "Del Rosa Massage",  
-                selected_date: appointment_date.toISOString(),
-                todays_date: times_not_available.TODAY,
-                slots_not_available: booked_times
-              }}
-            >
-              <ListItem 
-                button 
-                className="delRosaMassage" 
-              />
-            </AniLink>
-            <AniLink 
-              to="/makeappointment/" 
-              state={{ 
-                name: "Aster Massage",
-                selected_date: appointment_date.toISOString(),
-                todays_date: times_not_available.TODAY,
-                slots_not_available: booked_times
-              }}
-            >
-              <ListItem 
-                button
-                className="asterMassage" 
-              />
-            </AniLink>
+        <Divider />
+          <AniLink 
+            to="/makeappointment/" 
+            state={{ 
+              name: "Del Rosa Massage",  
+              selected_date: appointment_date.toISOString(),
+              todays_date: times_not_available.TODAY,
+              slots_not_available: booked_times
+            }}
+          >
+            <ListItem 
+              button 
+              className="delRosaMassage" 
+            />
+          </AniLink>
+          <AniLink 
+            to="/makeappointment/" 
+            state={{ 
+              name: "Aster Massage",
+              selected_date: appointment_date.toISOString(),
+              todays_date: times_not_available.TODAY,
+              slots_not_available: booked_times
+            }}
+          >
+            <ListItem 
+              button
+              className="asterMassage" 
+            />
+          </AniLink>
         </List>
       </Box>
     </Layout>

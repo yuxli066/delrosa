@@ -16,33 +16,38 @@ type App struct {
 }
 
 // Initialize server application & serve static files
-func (a *App) Initialize() {
+func (a *App) Initialize_FrontEnd() {
 	a.Router = mux.NewRouter()
-	a.ApiRouter = mux.NewRouter()
-
-	// set api routers
-	a.setRouters()
 
 	// set static routers
-	a.Router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./massage-website-frontend/public/static/"))))
-	a.Router.PathPrefix("/images/").Handler(http.StripPrefix("/images/", http.FileServer(http.Dir("./massage-website-frontend/public/images/"))))
-	a.Router.PathPrefix("/page-data/").Handler(http.StripPrefix("/page-data/", http.FileServer(http.Dir("./massage-website-frontend/public/page-data/"))))
+	// a.Router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./massage-website-frontend/public/static/"))))
+	// a.Router.PathPrefix("/images/").Handler(http.StripPrefix("/images/", http.FileServer(http.Dir("./massage-website-frontend/public/images/"))))
+	// a.Router.PathPrefix("/page-data/").Handler(http.StripPrefix("/page-data/", http.FileServer(http.Dir("./massage-website-frontend/public/page-data/"))))
 
-	a.Router.PathPrefix("/about/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./massage-website-frontend/public/about/index.html")
-	})
+	// a.Router.PathPrefix("/about/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "./massage-website-frontend/public/about/index.html")
+	// })
 
-	a.Router.PathPrefix("/appointments/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./massage-website-frontend/public/appointments/index.html")
-	})
+	// a.Router.PathPrefix("/appointments/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "./massage-website-frontend/public/appointments/index.html")
+	// })
 
-	a.Router.PathPrefix("/contact/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./massage-website-frontend/public/contact/index.html")
-	})
+	// a.Router.PathPrefix("/contact/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "./massage-website-frontend/public/contact/index.html")
+	// })
 
-	a.Router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./massage-website-frontend/public/index.html")
-	})
+	// a.Router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "./massage-website-frontend/public/index.html")
+	// })
+
+	buildHandler := http.FileServer(http.Dir("./massage-website-frontend/public/"))
+	a.Router.PathPrefix("/").Handler(buildHandler)
+}
+
+func (a *App) Initialize_Backend() {
+	a.ApiRouter = mux.NewRouter()
+	// set api routers
+	a.setRouters()
 }
 
 // The setRouters function specifies different backend routes for the api
