@@ -13,7 +13,7 @@
     "massage-website-backend"
   ],
   "engines": {
-    "node": "14.21.2"
+    "node": "18.15.0"
   },
   "engineStrict": true,
   "devDependencies": {
