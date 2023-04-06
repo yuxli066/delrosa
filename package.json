@@ -5,7 +5,7 @@
   "author": "Leo Li",
   "scripts": {
     "develop": "yarn workspace massage-website-frontend develop --verbose",
-    "start": "NODE_ENV=development yarn workspace massage-website-frontend develop --verbose",
+    "start": "yarn workspace massage-website-frontend develop --verbose",
     "build": "yarn workspace massage-website-frontend build"
   },
   "workspaces": [
